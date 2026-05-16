@@ -357,6 +357,9 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 <script src="data9.js?v=20260517b"></script>
 
 <script>
+// ── 새로고침 시 항상 맨 위로 ──
+window.onbeforeunload = function() { window.scrollTo(0, 0); }
+
 // ── 데이터 로딩 ──
 var TARIFF = {};
 window.addEventListener('load', function() {
@@ -609,11 +612,12 @@ function calcSur() {
     // 할증 전체 해제 시 → 기본 운임 결과로 스크롤
     if (wasShowing) {
       setTimeout(function() {
-        var resultWrap = document.getElementById('result');
-        if (resultWrap && resultWrap.style.display !== 'none') {
-          resultWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        var resultWrap = document.querySelector('.result-wrap');
+        if (resultWrap) {
+          var top = resultWrap.getBoundingClientRect().top + window.pageYOffset - 80;
+          window.scrollTo({ top: top, behavior: 'smooth' });
         }
-      }, 100);
+      }, 150);
     }
     return;
   }
@@ -633,8 +637,9 @@ function calcSur() {
   surEl.classList.add('show');
   // 할증 선택 시 → 할증 최종운임으로 스크롤
   setTimeout(function() {
-    surEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 100);
+    var top = surEl.getBoundingClientRect().top + window.pageYOffset - 80;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+  }, 150);
 }
 
 // ── 결과 표시 ──
