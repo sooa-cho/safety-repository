@@ -45,7 +45,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .step { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:visible; box-shadow:var(--shadow); position:relative; }
 .step-head { padding:13px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border2); background:var(--bg3); border-radius:calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0; }
 .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:#e8e8e8; border:1.5px solid #c0c0c0; color:var(--text2); font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
-.step-num.done { background:var(--mint); color:#fff; border-color:var(--mint); }
+.step-num.active { background:var(--mint); color:#fff; border-color:var(--mint); }
 .step-title { font-size:0.85rem; font-weight:700; color:var(--text); }
 .step-tag { font-size:0.65rem; color:var(--text3); font-weight:400; margin-left:4px; }
 .step-val { margin-left:auto; font-size:0.75rem; color:var(--mint); font-weight:700; max-width:50%; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -184,18 +184,31 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .sur-detail { margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:0.67rem; color:var(--text2); line-height:1.8; }
 .note { margin:10px 14px 0; padding:11px 13px; background:#f0fffe; border:1px solid rgba(0,184,169,0.20); border-left:3px solid var(--mint); border-radius:var(--radius-sm); font-size:0.67rem; color:#006b62; line-height:1.7; }
 
-/* ── PC: 모바일과 동일하게 1컬럼, 가운데 정렬 ── */
+/* ── PC 레이아웃 ── */
 @media (min-width: 768px) {
   body { padding-bottom: 40px; }
-  .header { height: 64px; padding: 0 32px; }
+  .header { height: 64px; padding: 0 40px; }
   .sebang-logo { height: 22px; }
-  .header-text h1 { font-size: 1rem; }
-  .header-text p { font-size: 0.62rem; }
-  .banner { padding: 10px 32px; }
-}
+  .header-text h1 { font-size: 1.05rem; }
+  .header-text p { font-size: 0.65rem; }
+  .banner { padding: 10px 40px; }
 
-/* PC에서 콘텐츠 가운데 정렬 - 항상 적용 */
-.pc-wrap { max-width: 520px; margin: 0 auto; }
+  /* 콘텐츠 꽉 차게 - 최대너비 제한 없음 */
+  .pc-wrap { padding: 0 24px; }
+
+  /* 스텝 카드 마진 조정 */
+  .step { margin: 16px 0 0; }
+  .result-wrap { margin: 16px 0 0; }
+  .sur-result { margin: 10px 0 0; }
+  .note { margin: 10px 0 16px; }
+
+  /* 폰트 약간 크게 */
+  #search-input { font-size: 1rem; }
+  .tog-btn { font-size: 0.9rem; padding: 14px 10px; }
+  .step-title { font-size: 0.92rem; }
+  .fl { font-size: 0.72rem; }
+  .fv { font-size: 0.85rem; }
+}
 </style>
 </head>
 <body>
@@ -245,7 +258,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 
 <div class="step">
   <div class="step-head">
-    <div class="step-num done" id="sn2">✓</div>
+    <div class="step-num" id="sn2">2</div>
     <span class="step-title">운송 유형</span>
     <span class="step-val" id="sv2">왕복</span>
   </div>
@@ -259,7 +272,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 
 <div class="step">
   <div class="step-head">
-    <div class="step-num done" id="sn3">✓</div>
+    <div class="step-num" id="sn3">3</div>
     <span class="step-title">운임 유형</span>
     <span class="step-val" id="sv3">안전위탁</span>
   </div>
@@ -570,12 +583,18 @@ function selectPort(portName) {
 }
 function setDone(numId, valId, txt) {
   var el = document.getElementById(numId);
-  el.classList.add('done'); el.textContent = '✓';
+  el.classList.remove('done');
+  el.classList.add('active');
+  // 숫자는 그대로 유지 (변경 안 함)
   document.getElementById(valId).textContent = txt;
 }
 function fmt(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
 setFareType('위탁');
-setDone('sn2','sv2','왕복');
+// sn2, sn3 초기 active 상태
+document.getElementById('sn2').classList.add('active');
+document.getElementById('sn3').classList.add('active');
+document.getElementById('sv2').textContent = '왕복';
+document.getElementById('sv3').textContent = '안전위탁';
 </script>
 </div><!-- /pc-wrap -->
 </body>
