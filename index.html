@@ -577,6 +577,13 @@ function calcSur() {
   var surEl = document.getElementById('sur-result');
   if (!curPortData || rates.length === 0) {
     surEl.classList.remove('show');
+    // 할증 해제 시 → 기본 운임 결과로 스크롤
+    setTimeout(function() {
+      var resultWrap = document.getElementById('result');
+      if (resultWrap && resultWrap.style.display !== 'none') {
+        resultWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
     return;
   }
   if (!currentFareType) return;
@@ -593,7 +600,7 @@ function calcSur() {
   document.getElementById('sr-f20').textContent = fmt(final20);
   document.getElementById('sur-detail').textContent = '적용: ' + rates.map(function(r){ return r.label; }).join(', ') + ' / 40FT ' + rate40.toFixed(1) + '% · 20FT ' + rate20.toFixed(1) + '%';
   surEl.classList.add('show');
-  // 할증 최종운임으로 스크롤
+  // 할증 선택 시 → 할증 최종운임으로 스크롤
   setTimeout(function() {
     surEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, 100);
