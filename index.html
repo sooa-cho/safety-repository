@@ -385,7 +385,7 @@ window.addEventListener('load', function() {
 });
 
 var acResults = [];
-var currentKey = null, currentType = '왕복', currentFareType = '위탁';
+var currentKey = null, currentType = null, currentFareType = null;
 var curEntry = null, curPortData = null;
 
 var inp = document.getElementById('search-input');
@@ -495,7 +495,12 @@ function selectItem(i) {
   inp.blur();
   currentKey = item.k;
   setDone('sn1', 'sv1', item.l.split(' ').slice(-2).join(' '));
-  showResult(item.k, item.l);
+  // 운송유형, 운임유형 모두 선택됐을 때만 결과 표시
+  if (currentType && currentFareType) {
+    showResult(item.k, item.l);
+  } else {
+    document.getElementById('result').style.display = 'none';
+  }
 }
 
 function setType(t) {
@@ -595,6 +600,11 @@ function calcSur() {
   surEl.classList.add('show');
 }
 function showResult(key, label) {
+  // 목적지 + 운송유형 + 운임유형 3가지 모두 선택해야 결과 표시
+  if (!key || !currentType || !currentFareType) {
+    document.getElementById('result').style.display = 'none';
+    return;
+  }
   var entry = TARIFF[key];
   if (!entry) { alert('데이터를 찾을 수 없습니다.'); return; }
   curEntry = entry;
