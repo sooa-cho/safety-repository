@@ -16,341 +16,220 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#ebebeb;
-  --bg2:#ffffff;
-  --bg3:#f5f5f5;
-  --gray:#5a5a5a;        /* 쥐색 - 버튼 활성 */
-  --gray-dark:#3d3d3d;   /* 세방 CI Dark Gray - 헤더 */
-  --gray-light:#e0e0e0;
-  --red:#00b8a9;          /* 세방 CI Red - 포인트 */
-  --red-dim:rgba(0,184,169,0.08);
+  --bg:#ebebeb; --bg2:#fff; --bg3:#f5f5f5;
+  --gray:#5a5a5a; --gray-dark:#3d3d3d;
+  --mint:#00b8a9; --mint-dim:rgba(0,184,169,0.10);
   --gold:#c47800;
-  --gold-dim:rgba(196,120,0,0.10);
-  --text:#1a1a1a;
-  --text2:#5a5a5a;
-  --text3:#9a9a9a;
-  --border:#d0d0d0;
-  --border2:#e8e8e8;
+  --text:#1a1a1a; --text2:#5a5a5a; --text3:#9a9a9a;
+  --border:#d0d0d0; --border2:#e8e8e8;
   --shadow:0 2px 14px rgba(0,0,0,0.10);
-  --shadow2:0 4px 24px rgba(0,0,0,0.14);
-  --radius:14px;
-  --radius-sm:10px;
+  --radius:14px; --radius-sm:10px;
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:60px; }
 
-/* ── 헤더 ── */
-.header {
-  background:#3d3d3d;
-  padding:0 14px;
-  height:56px;
-  display:flex; align-items:center; gap:10px;
-  position:sticky; top:0; z-index:50;
-  box-shadow:0 2px 10px rgba(0,0,0,0.25);
-  border-bottom:3px solid #00b8a9;
-}
-.sebang-logo {
-  height:20px; object-fit:contain;
-  filter:brightness(0) invert(1);
-  flex-shrink:0; max-width:85px;
-}
-.sebang-text {
-  font-size:1.3rem; font-weight:900;
-  font-style:italic; color:#ffffff;
-  font-family:Arial Black, Impact, sans-serif;
-  white-space:nowrap; flex-shrink:0;
-}
-.header-divider {
-  width:1px; height:30px;
-  background:rgba(255,255,255,0.25);
-  flex-shrink:0;
-}
-.header-text {
-  flex:1; min-width:0;
-}
-.header-text h1 {
-  font-size:0.82rem; font-weight:700; color:#fff;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  line-height:1.25;
-}
-.header-text p {
-  font-size:0.55rem; color:rgba(255,255,255,0.55);
-  margin-top:2px; white-space:nowrap;
-}
-.vat {
-  font-size:0.62rem; font-weight:700;
-  color:#ffffff;
-  background:rgba(255,255,255,0.15);
-  border:1px solid rgba(255,255,255,0.35);
-  padding:4px 9px; border-radius:5px;
-  white-space:nowrap; flex-shrink:0;
-}
+/* 헤더 */
+.header { background:#3d3d3d; padding:0 14px; height:56px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; box-shadow:0 2px 10px rgba(0,0,0,0.25); border-bottom:3px solid var(--mint); }
+.sebang-logo { height:20px; object-fit:contain; filter:brightness(0) invert(1); flex-shrink:0; max-width:85px; }
+.sebang-text { font-size:1.3rem; font-weight:900; font-style:italic; color:#fff; font-family:Arial Black,Impact,sans-serif; white-space:nowrap; flex-shrink:0; }
+.header-divider { width:1px; height:30px; background:rgba(255,255,255,0.25); flex-shrink:0; }
+.header-text { flex:1; min-width:0; }
+.header-text h1 { font-size:0.82rem; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.header-text p { font-size:0.55rem; color:rgba(255,255,255,0.55); margin-top:2px; white-space:nowrap; }
+.vat { font-size:0.62rem; font-weight:700; color:#fff; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.35); padding:4px 9px; border-radius:5px; white-space:nowrap; flex-shrink:0; }
 
-/* ── 고시 배너 ── */
-.banner {
-  background:#f5f5f5;
-  border-bottom:1px solid var(--border);
-  padding:8px 18px;
-  display:flex; align-items:center; gap:8px;
-}
+/* 배너 */
+.banner { background:#f5f5f5; border-bottom:1px solid var(--border); padding:8px 18px; display:flex; align-items:center; gap:8px; }
 .banner-label { font-size:0.7rem; color:var(--text2); }
-.banner-select {
-  font-size:0.75rem; font-weight:700; color:var(--gray-dark);
-  background:transparent; border:none; outline:none;
-  cursor:pointer; font-family:inherit;
-}
+.banner-select { font-size:0.75rem; font-weight:700; color:var(--gray-dark); background:transparent; border:none; outline:none; cursor:pointer; font-family:inherit; }
 .banner-gov { margin-left:auto; font-size:0.65rem; color:var(--text3); }
 
-/* ── STEP 카드 ── */
-.step {
-  margin:14px 14px 0;
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-left:4px solid #00b8a9;
-  border-radius:var(--radius);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-}
-.step-head {
-  padding:13px 16px;
-  display:flex; align-items:center; gap:10px;
-  border-bottom:1px solid var(--border2);
-  background:var(--bg3);
-}
-.step-num {
-  width:26px; height:26px; border-radius:50%; flex-shrink:0;
-  background:#e8e8e8; border:1.5px solid #c0c0c0;
-  color:var(--text2); font-size:0.75rem; font-weight:700;
-  display:flex; align-items:center; justify-content:center; transition:all 0.2s;
-}
-.step-num.done { background:#00b8a9; color:#fff; border-color:#00b8a9; }
+/* STEP 카드 */
+.step { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+.step-head { padding:13px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border2); background:var(--bg3); }
+.step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:#e8e8e8; border:1.5px solid #c0c0c0; color:var(--text2); font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.step-num.done { background:var(--mint); color:#fff; border-color:var(--mint); }
 .step-title { font-size:0.85rem; font-weight:700; color:var(--text); }
 .step-tag { font-size:0.65rem; color:var(--text3); font-weight:400; margin-left:4px; }
-.step-val {
-  margin-left:auto; font-size:0.75rem; color:#00b8a9;
-  font-weight:700; max-width:50%; text-align:right;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
+.step-val { margin-left:auto; font-size:0.75rem; color:var(--mint); font-weight:700; max-width:50%; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .step-body { padding:14px 16px; }
 
-/* ── 검색창 ── */
-.search-wrap { position:relative; }
-.search-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:16px; pointer-events:none; z-index:1; }
-#search-input {
-  width:100%; padding:14px 14px 14px 42px;
-  background:var(--bg3); border:1.5px solid var(--border);
-  border-radius:var(--radius-sm); font-size:16px;
-  font-family:inherit; color:var(--text); outline:none;
-  transition:border-color 0.2s; -webkit-appearance:none;
-}
-#search-input::placeholder { color:var(--text3); }
-#search-input:focus { border-color:var(--gray); box-shadow:0 0 0 3px rgba(90,90,90,0.10); background:#fff; }
+/* 검색창 (읽기전용 - 탭하면 전체화면 검색) */
+.search-btn { width:100%; padding:14px 14px 14px 42px; background:var(--bg3); border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:1rem; font-family:inherit; color:var(--text3); text-align:left; cursor:pointer; position:relative; display:flex; align-items:center; gap:10px; -webkit-appearance:none; }
+.search-btn-icon { font-size:16px; flex-shrink:0; }
+.search-btn-text { color:var(--text3); font-size:0.95rem; }
+.search-btn.has-value .search-btn-text { color:var(--text); }
+
 .hint-text { font-size:0.7rem; color:var(--text2); margin-top:8px; padding-left:2px; line-height:1.7; }
 .hint-text b { color:var(--gray-dark); font-weight:700; }
 
-/* ── 자동완성 ── */
-#autocomplete {
-  position:absolute; width:100%; top:calc(100% + 6px); left:0; z-index:999;
-  background:#fff; border:1.5px solid var(--gray);
-  border-radius:var(--radius-sm); overflow:hidden;
-  box-shadow:var(--shadow2); display:none;
-  max-height:250px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+/* ── 전체화면 검색 레이어 ── */
+#search-layer {
+  display:none;
+  position:fixed;
+  top:0; left:0; right:0; bottom:0;
+  z-index:9999;
+  background:#fff;
+  flex-direction:column;
 }
-.ac-item {
-  padding:13px 15px; font-size:0.88rem; cursor:pointer;
-  border-bottom:1px solid var(--border2);
-  display:flex; align-items:center; gap:10px;
-  min-height:50px; color:var(--text);
-}
-.ac-item:last-child { border-bottom:none; }
-.ac-item:active { background:#f0f0f0; }
-.ac-dot { width:7px; height:7px; border-radius:50%; background:var(--gray); flex-shrink:0; }
-.ac-match { color:var(--green); font-weight:700; }
+#search-layer.open { display:flex; }
 
-/* ── 토글 버튼 ── */
+#search-layer-top {
+  background:#3d3d3d;
+  padding:10px 14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+  border-bottom:3px solid var(--mint);
+}
+#search-layer-box {
+  flex:1;
+  background:#fff;
+  border-radius:8px;
+  padding:0 12px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+#search-layer-inp {
+  flex:1;
+  border:none;
+  outline:none;
+  font-size:16px;
+  font-family:inherit;
+  color:#1a1a1a;
+  background:transparent;
+}
+#search-layer-clear {
+  font-size:1.1rem;
+  color:#9a9a9a;
+  cursor:pointer;
+  padding:4px;
+  display:none;
+  line-height:1;
+}
+#search-layer-cancel {
+  color:#fff;
+  font-size:0.88rem;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+  flex-shrink:0;
+  padding:8px 4px;
+}
+#search-layer-info {
+  padding:10px 16px;
+  font-size:0.72rem;
+  color:#9a9a9a;
+  background:#f5f5f5;
+  border-bottom:1px solid #eee;
+  flex-shrink:0;
+}
+#search-layer-list {
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  background:#fff;
+}
+.sl-item {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 16px;
+  min-height:54px;
+  font-size:0.92rem;
+  color:#1a1a1a;
+  border-bottom:1px solid #f0f0f0;
+  cursor:pointer;
+  /* 핵심: manipulation으로 300ms 딜레이 제거 */
+  touch-action:manipulation;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.sl-item:last-child { border-bottom:none; }
+.sl-item:active { background:#f0f0f0; }
+.sl-icon { color:#bbb; font-size:14px; flex-shrink:0; }
+.sl-match { color:var(--mint); font-weight:700; }
+.sl-empty { padding:40px 16px; text-align:center; color:#9a9a9a; font-size:0.9rem; line-height:2; }
+
+/* 토글 버튼 */
 .toggle-row { display:grid; gap:8px; }
-.tog-btn {
-  padding:13px 8px; border-radius:var(--radius-sm);
-  border:1.5px solid var(--border); background:var(--bg3);
-  color:var(--text2); font-size:0.85rem; font-weight:600;
-  font-family:inherit; cursor:pointer; text-align:center;
-  transition:all 0.15s; min-height:50px;
-}
-.tog-btn.active {
-  background:var(--gray); border-color:var(--gray);
-  color:#ffffff; font-weight:700;
-  box-shadow:0 2px 8px rgba(0,0,0,0.18);
-}
+.tog-btn { padding:13px 8px; border-radius:var(--radius-sm); border:1.5px solid var(--border); background:var(--bg3); color:var(--text2); font-size:0.85rem; font-weight:600; font-family:inherit; cursor:pointer; text-align:center; transition:all 0.15s; min-height:50px; }
+.tog-btn.active { background:var(--gray); border-color:var(--gray); color:#fff; font-weight:700; box-shadow:0 2px 8px rgba(0,0,0,0.18); }
+.fare-type-desc { font-size:0.72rem; color:var(--text2); margin-top:10px; padding:10px 12px; background:var(--bg3); border-radius:8px; border-left:3px solid var(--gray); border:1px solid var(--border2); border-left:3px solid var(--gray); line-height:1.6; }
 
-/* ── 운임 유형 설명 ── */
-.fare-type-desc {
-  font-size:0.72rem; color:var(--text2);
-  margin-top:10px; padding:10px 12px;
-  background:var(--bg3); border-radius:8px;
-  border-left:3px solid var(--gray);
-  border-top:1px solid var(--border2);
-  border-right:1px solid var(--border2);
-  border-bottom:1px solid var(--border2);
-  line-height:1.6;
-}
-
-/* ── 할증 ── */
+/* 할증 */
 .sur-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.sur-item {
-  background:var(--bg3); border:1.5px solid var(--border);
-  border-radius:var(--radius-sm); padding:12px;
-  cursor:pointer; transition:all 0.15s;
-  min-height:64px; display:flex; flex-direction:column; justify-content:center;
-}
+.sur-item { background:var(--bg3); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:12px; cursor:pointer; transition:all 0.15s; min-height:64px; display:flex; flex-direction:column; justify-content:center; }
 .sur-item.checked { background:#efefef; border-color:var(--gray); }
-.sur-item.checked-warn { background:#f0fffe; border-color:var(--green); }
+.sur-item.checked-warn { background:#f0fffe; border-color:var(--mint); }
 .sur-top { display:flex; align-items:center; gap:7px; }
-.sur-check {
-  width:20px; height:20px; border-radius:5px;
-  border:1.5px solid var(--border); background:#fff;
-  display:flex; align-items:center; justify-content:center;
-  font-size:12px; flex-shrink:0; transition:all 0.15s;
-}
+.sur-check { width:20px; height:20px; border-radius:5px; border:1.5px solid var(--border); background:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; transition:all 0.15s; }
 .sur-item.checked .sur-check { background:var(--gray); border-color:var(--gray); color:#fff; }
-.sur-item.checked-warn .sur-check { background:var(--green); border-color:var(--green); color:#fff; }
+.sur-item.checked-warn .sur-check { background:var(--mint); border-color:var(--mint); color:#fff; }
 .sur-name { font-size:0.78rem; font-weight:600; color:var(--text); }
 .sur-rate { font-size:0.68rem; color:var(--text2); margin-top:5px; padding-left:27px; }
 .sur-item.checked .sur-rate { color:var(--gray); font-weight:700; }
-.sur-item.checked-warn .sur-rate { color:var(--green); font-weight:700; }
-
-.weight-input-wrap {
-  margin-top:10px; padding:12px;
-  background:var(--bg3); border-radius:9px;
-  border:1px solid var(--border2); display:none;
-}
+.sur-item.checked-warn .sur-rate { color:var(--mint); font-weight:700; }
+.weight-input-wrap { margin-top:10px; padding:12px; background:var(--bg3); border-radius:9px; border:1px solid var(--border2); display:none; }
 .weight-input-wrap.show { display:block; }
 .weight-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
 .weight-row:last-child { margin-bottom:0; }
 .weight-label { font-size:0.72rem; color:var(--text2); min-width:110px; }
-.weight-input {
-  width:64px; padding:8px; border-radius:7px;
-  background:#fff; border:1.5px solid var(--border);
-  color:var(--text); font-size:0.9rem;
-  font-family:'JetBrains Mono',monospace;
-  text-align:center; outline:none; -webkit-appearance:none;
-}
-.weight-input:focus { border-color:var(--gray); }
+.weight-input { width:64px; padding:8px; border-radius:7px; background:#fff; border:1.5px solid var(--border); color:var(--text); font-size:0.9rem; font-family:'JetBrains Mono',monospace; text-align:center; outline:none; -webkit-appearance:none; }
 
-/* ── 로딩 ── */
+/* 로딩 */
 #loading { text-align:center; padding:40px 20px; color:var(--text2); font-size:0.85rem; }
-.spin {
-  display:inline-block; width:24px; height:24px;
-  border:2px solid var(--border); border-top-color:var(--gray);
-  border-radius:50%; animation:sp 0.7s linear infinite;
-  margin-right:8px; vertical-align:middle;
-}
+.spin { display:inline-block; width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--gray); border-radius:50%; animation:sp 0.7s linear infinite; margin-right:8px; vertical-align:middle; }
 @keyframes sp { to{ transform:rotate(360deg) } }
 .load-bar { width:200px; height:4px; background:var(--border); border-radius:2px; margin:12px auto 0; overflow:hidden; }
 .load-fill { height:100%; background:var(--gray); border-radius:2px; transition:width 0.3s; }
 
-/* ── 결과 ── */
+/* 결과 */
 #result { display:none; }
-.result-wrap {
-  margin:14px 14px 0; background:var(--bg2);
-  border:1px solid var(--border);
-  border-left:4px solid #00b8a9;
-  border-radius:var(--radius);
-  overflow:hidden; box-shadow:var(--shadow);
-}
-.result-top {
-  padding:14px 16px;
-  background:var(--gray-dark);
-  border-bottom:3px solid var(--green);
-}
+.result-wrap { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+.result-top { padding:14px 16px; background:var(--gray-dark); border-bottom:3px solid var(--mint); }
 .result-loc { font-size:1rem; font-weight:700; color:#fff; }
-.result-sub { font-size:0.68rem; color:rgba(255,255,255,0.6); margin-top:3px; line-height:1.5; }
-
-/* 항만 탭 */
+.result-sub { font-size:0.68rem; color:rgba(255,255,255,0.6); margin-top:3px; }
 .port-scroll { overflow-x:auto; padding:12px 14px 0; scrollbar-width:none; -webkit-overflow-scrolling:touch; background:#fff; }
 .port-scroll::-webkit-scrollbar { display:none; }
 .port-tabs { display:flex; gap:6px; width:max-content; padding-bottom:12px; }
-.ptab {
-  padding:8px 14px; border-radius:7px;
-  font-size:0.75rem; font-weight:600;
-  border:1.5px solid var(--border);
-  background:var(--bg3); color:var(--text2);
-  cursor:pointer; white-space:nowrap; min-height:36px;
-  display:flex; align-items:center; transition:all 0.15s;
-}
-.ptab.active {
-  background:var(--gray); border-color:var(--gray); color:#fff; font-weight:700;
-  box-shadow:0 2px 6px rgba(0,0,0,0.15);
-}
-
-/* 운임 카드 */
+.ptab { padding:8px 14px; border-radius:7px; font-size:0.75rem; font-weight:600; border:1.5px solid var(--border); background:var(--bg3); color:var(--text2); cursor:pointer; white-space:nowrap; min-height:36px; display:flex; align-items:center; transition:all 0.15s; }
+.ptab.active { background:var(--gray); border-color:var(--gray); color:#fff; font-weight:700; }
 .fare-area { padding:0 14px 14px; background:#fff; }
 .fare-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .fare-card { border-radius:var(--radius-sm); overflow:hidden; border:1.5px solid var(--border); }
-.fare-card-head {
-  padding:10px 12px; display:flex; align-items:center; gap:6px;
-  border-bottom:1px solid var(--border2); background:var(--bg3);
-}
+.fare-card-head { padding:10px 12px; display:flex; align-items:center; gap:6px; border-bottom:1px solid var(--border2); background:var(--bg3); }
 .ft-label { font-size:0.7rem; font-weight:700; padding:3px 8px; border-radius:4px; }
 .ft40 .ft-label { background:#e8e8e8; color:#3d3d3d; }
-.ft20 .ft-label { background:rgba(0,184,169,0.10); color:var(--green); }
+.ft20 .ft-label { background:var(--mint-dim); color:var(--mint); }
 .dist-km { margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--gold); font-weight:700; }
 .fare-rows { padding:10px 12px; background:#fff; }
-.fare-row {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:7px 0; border-bottom:1px solid var(--border2); transition:all 0.2s;
-}
+.fare-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border2); transition:all 0.2s; }
 .fare-row:last-child { border-bottom:none; }
 .fl { font-size:0.67rem; color:var(--text2); }
 .fv { font-family:'JetBrains Mono',monospace; font-size:0.8rem; font-weight:600; color:var(--text); }
-
-/* 선택된 유형 강조 */
-.fare-row.selected-type {
-  background:#f5f5f5; border-radius:7px;
-  padding:9px 8px; margin:2px -8px;
-  border-bottom:none !important;
-  border:1px solid #c0c0c0 !important;
-}
+.fare-row.selected-type { background:#f5f5f5; border-radius:7px; padding:9px 8px; margin:2px -8px; border:1px solid #c0c0c0 !important; }
 .fare-row.selected-type .fl { color:var(--gray-dark); font-weight:700; font-size:0.72rem; }
 .fare-row.selected-type .fv { color:var(--gray-dark); font-size:1rem; font-weight:800; }
 .fare-row.dimmed { opacity:0.3; }
-
-/* 할증 최종 결과 */
-.sur-result {
-  margin:10px 14px 0;
-  background:linear-gradient(135deg,#f8f8f8,#f0f0f0);
-  border:1.5px solid var(--gray);
-  border-top:3px solid var(--green);
-  border-radius:var(--radius-sm); padding:14px 16px; display:none;
-  box-shadow:var(--shadow);
-}
+.sur-result { margin:10px 14px 0; background:linear-gradient(135deg,#f8f8f8,#f0f0f0); border:1.5px solid var(--gray); border-top:3px solid var(--mint); border-radius:var(--radius-sm); padding:14px 16px; display:none; box-shadow:var(--shadow); }
 .sur-result.show { display:block; }
-.sur-result-title { font-size:0.78rem; color:var(--gray-dark); font-weight:800; margin-bottom:10px; letter-spacing:0.02em; }
+.sur-result-title { font-size:0.78rem; color:var(--gray-dark); font-weight:800; margin-bottom:10px; }
 .sur-final-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.sur-final-item {
-  background:#fff; border-radius:8px; padding:10px 12px;
-  border:1px solid var(--border);
-  border-top:2px solid var(--gray);
-}
+.sur-final-item { background:#fff; border-radius:8px; padding:10px 12px; border:1px solid var(--border); border-top:2px solid var(--gray); }
 .sfl { font-size:0.65rem; color:var(--text2); margin-bottom:4px; }
 .sfv { font-family:'JetBrains Mono',monospace; font-size:1rem; font-weight:800; color:var(--gray-dark); }
-.sur-detail {
-  margin-top:10px; padding-top:10px;
-  border-top:1px solid var(--border);
-  font-size:0.67rem; color:var(--text2); line-height:1.8;
-}
-
-/* 주의사항 */
-.note {
-  margin:10px 14px 0; padding:11px 13px;
-  background:#f0fffe; border:1px solid rgba(0,184,169,0.20);
-  border-left:3px solid var(--green);
-  border-radius:var(--radius-sm);
-  font-size:0.67rem; color:#006b62; line-height:1.7;
-}
+.sur-detail { margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:0.67rem; color:var(--text2); line-height:1.8; }
+.note { margin:10px 14px 0; padding:11px 13px; background:#f0fffe; border:1px solid rgba(0,184,169,0.20); border-left:3px solid var(--mint); border-radius:var(--radius-sm); font-size:0.67rem; color:#006b62; line-height:1.7; }
 </style>
 </head>
 <body>
 
+<!-- 헤더 -->
 <div class="header">
   <img class="sebang-logo" src="https://www.sebang.com/img/logo.png" alt="SEBANG"
     onerror="this.outerHTML='<span class=&quot;sebang-text&quot;>SEBANG</span>'">
@@ -360,14 +239,18 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
     <p>2026년 국토교통부 고시 제2026-55호</p>
   </div>
   <div class="vat">VAT 별도</div>
-</div></div>
+</div>
+
+<!-- 배너 -->
 <div class="banner">
   <span class="banner-label">📋 적용 고시:</span>
-  <select id="version-select" class="banner-select" onchange="onVersionChange()">
-    <option value="2026-02" selected>2026년 2월 고시</option>
+  <select class="banner-select" onchange="alert('현재는 2026년 2월 고시 데이터만 제공됩니다.')">
+    <option selected>2026년 2월 고시</option>
   </select>
   <span class="banner-gov">국토교통부 제2026-55호</span>
 </div>
+
+<!-- STEP 1 검색 -->
 <div class="step">
   <div class="step-head">
     <div class="step-num" id="sn1">1</div>
@@ -375,15 +258,32 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
     <span class="step-val" id="sv1"></span>
   </div>
   <div class="step-body">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input id="search-input" type="text" placeholder="예) 해운대, 반여동, 경주시..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <div id="autocomplete"></div>
+    <div class="search-btn" id="search-btn" onclick="openSearch()">
+      <span class="search-btn-icon">🔍</span>
+      <span class="search-btn-text" id="search-btn-text">예) 해운대, 반여동, 경주시...</span>
     </div>
-    <p class="hint-text">시·도 / 시·군·구 / 읍·면·동 중 <b>일부만 입력</b>해도 검색돼요<br>예) <b>부산 해운대</b> &nbsp;·&nbsp; <b>반여동</b> &nbsp;·&nbsp; <b>경주</b></p>
+    <p class="hint-text">탭하면 검색창이 열려요<br>예) <b>부산 해운대</b> &nbsp;·&nbsp; <b>반여동</b> &nbsp;·&nbsp; <b>경주</b></p>
   </div>
 </div>
 
+<!-- 전체화면 검색 레이어 -->
+<div id="search-layer">
+  <div id="search-layer-top">
+    <div id="search-layer-box">
+      <span style="font-size:15px;color:#aaa;flex-shrink:0;">🔍</span>
+      <input id="search-layer-inp" type="text"
+        placeholder="지역명 입력 예) 해운대, 반여동..."
+        autocomplete="off" autocorrect="off"
+        autocapitalize="off" spellcheck="false"/>
+      <span id="search-layer-clear" onclick="clearSearch()">✕</span>
+    </div>
+    <span id="search-layer-cancel" onclick="closeSearch()">취소</span>
+  </div>
+  <div id="search-layer-info">지역명을 입력하세요</div>
+  <div id="search-layer-list"></div>
+</div>
+
+<!-- STEP 2 -->
 <div class="step">
   <div class="step-head">
     <div class="step-num done" id="sn2">✓</div>
@@ -398,6 +298,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   </div>
 </div>
 
+<!-- STEP 3 -->
 <div class="step">
   <div class="step-head">
     <div class="step-num done" id="sn3">✓</div>
@@ -414,6 +315,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   </div>
 </div>
 
+<!-- STEP 4 -->
 <div class="step">
   <div class="step-head">
     <div class="step-num" id="sn4">4</div>
@@ -446,6 +348,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 
 <div id="loading"><span class="spin"></span>데이터 로딩 중...<div class="load-bar"><div class="load-fill" id="load-fill" style="width:0%"></div></div></div>
 
+<!-- 결과 -->
 <div id="result">
   <div class="result-wrap">
     <div class="result-top"><div class="result-loc" id="r-loc">-</div><div class="result-sub" id="r-sub">-</div></div>
@@ -482,125 +385,160 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   <div class="note">※ VAT 미포함 &nbsp;|&nbsp; 안전위탁: 운수사업자→화물차주 &nbsp;|&nbsp; 안전운송: 화주→운수사업자<br>※ 다중 할증: 최고 100% + 나머지 각 50% (최대 3개 합산)</div>
 </div>
 
-<!-- 데이터 파일 분할 로드 -->
-<script src="flat.js?v=1778846427"></script>
-<script src="data0.js?v=1778846427"></script>
-<script src="data1.js?v=1778846427"></script>
-<script src="data2.js?v=1778846427"></script>
-<script src="data3.js?v=1778846427"></script>
-<script src="data4.js?v=1778846427"></script>
-<script src="data5.js?v=1778846427"></script>
-<script src="data6.js?v=1778846427"></script>
-<script src="data7.js?v=1778846427"></script>
-<script src="data8.js?v=1778846427"></script>
-<script src="data9.js?v=1778846427"></script>
+<script src="flat.js?v=20260516b"></script>
+<script src="data0.js?v=20260516b"></script>
+<script src="data1.js?v=20260516b"></script>
+<script src="data2.js?v=20260516b"></script>
+<script src="data3.js?v=20260516b"></script>
+<script src="data4.js?v=20260516b"></script>
+<script src="data5.js?v=20260516b"></script>
+<script src="data6.js?v=20260516b"></script>
+<script src="data7.js?v=20260516b"></script>
+<script src="data8.js?v=20260516b"></script>
+<script src="data9.js?v=20260516b"></script>
 
 <script>
+// ── 데이터 로딩 ──
 var TARIFF = {};
-var loaded = 0;
-function checkLoaded() {
-  loaded++;
-  var pct = Math.round(loaded / 11 * 100);
-  var fill = document.getElementById('load-fill');
-  if (fill) fill.style.width = pct + '%';
-  if (loaded >= 11) {
-    // 청크 합치기
-    for (var i = 0; i < 10; i++) {
-      var chunk = window['TARIFF_CHUNK' + i];
-      if (chunk) {
-        var keys = Object.keys(chunk);
-        for (var j = 0; j < keys.length; j++) {
-          TARIFF[keys[j]] = chunk[keys[j]];
-        }
-      }
-    }
-    document.getElementById('loading').style.display = 'none';
-  }
-}
-
-// 스크립트 로드 완료 감지
 window.addEventListener('load', function() {
   setTimeout(function() {
     for (var i = 0; i < 10; i++) {
-      if (window['TARIFF_CHUNK' + i]) loaded++;
-    }
-    if (window.FLAT) loaded++;
-    var fill = document.getElementById('load-fill');
-    if (fill) fill.style.width = '100%';
-    for (var i = 0; i < 10; i++) {
       var chunk = window['TARIFF_CHUNK' + i];
       if (chunk) {
         var keys = Object.keys(chunk);
-        for (var j = 0; j < keys.length; j++) {
-          TARIFF[keys[j]] = chunk[keys[j]];
-        }
+        for (var j = 0; j < keys.length; j++) TARIFF[keys[j]] = chunk[keys[j]];
       }
     }
+    document.getElementById('load-fill').style.width = '100%';
     document.getElementById('loading').style.display = 'none';
   }, 500);
 });
 
-var acResults = [], currentKey = null, currentType = '왕복', currentFareType = '위탁';
+// ── 전역 변수 ──
+var acResults = [];
+var currentKey = null, currentType = '왕복', currentFareType = '위탁';
 var curEntry = null, curPortData = null;
-var searchInput = document.getElementById('search-input');
-var acEl = document.getElementById('autocomplete');
 
-function renderAC() {
-  var q = searchInput.value;
-  if (!q || q.length < 1) { acEl.style.display = 'none'; return; }
-  var tokens = q.trim().split(' ').filter(function(t) { return t.length > 0; });
+// ── 전체화면 검색 레이어 ──
+var layer = document.getElementById('search-layer');
+var layerInp = document.getElementById('search-layer-inp');
+var layerList = document.getElementById('search-layer-list');
+var layerInfo = document.getElementById('search-layer-info');
+var layerClear = document.getElementById('search-layer-clear');
+
+function openSearch() {
+  layer.classList.add('open');
+  // 키보드가 올라오기 전에 포커스
+  setTimeout(function() { layerInp.focus(); }, 50);
+}
+
+function closeSearch() {
+  layer.classList.remove('open');
+  layerInp.value = '';
+  layerList.innerHTML = '';
+  layerInfo.textContent = '지역명을 입력하세요';
+  layerClear.style.display = 'none';
+}
+
+function clearSearch() {
+  layerInp.value = '';
+  layerList.innerHTML = '';
+  layerInfo.textContent = '지역명을 입력하세요';
+  layerClear.style.display = 'none';
+  layerInp.focus();
+}
+
+// 입력할 때마다 실시간 검색
+layerInp.addEventListener('input', function() {
+  var q = layerInp.value.trim();
+  layerClear.style.display = q ? 'block' : 'none';
+
+  if (!q) {
+    layerList.innerHTML = '';
+    layerInfo.textContent = '지역명을 입력하세요';
+    return;
+  }
+
+  var tokens = q.split(/\s+/).filter(function(t) { return t; });
   var flat = window.FLAT || [];
   acResults = flat.filter(function(item) {
     return tokens.every(function(t) { return item.l.indexOf(t) >= 0; });
-  }).slice(0, 20);
-  if (!acResults.length) { acEl.style.display = 'none'; return; }
-  acEl.innerHTML = acResults.map(function(item, i) {
+  }).slice(0, 50);
+
+  if (!acResults.length) {
+    layerInfo.textContent = '검색 결과가 없습니다';
+    layerList.innerHTML = '<div class="sl-empty">일치하는 지역이 없어요<br>다르게 입력해보세요</div>';
+    return;
+  }
+
+  layerInfo.textContent = '검색 결과 ' + acResults.length + '건 · 탭해서 선택';
+  layerList.innerHTML = acResults.map(function(item, i) {
     var label = item.l;
     tokens.forEach(function(t) {
-      label = label.split(t).join('<span class="ac-match">' + t + '</span>');
+      label = label.split(t).join('<span class="sl-match">' + t + '</span>');
     });
-    return '<div class="ac-item" data-i="' + i + '"><div class="ac-dot"></div><span>' + label + '</span></div>';
+    return '<div class="sl-item" data-i="' + i + '"><span class="sl-icon">📍</span><span>' + label + '</span></div>';
   }).join('');
-  acEl.style.display = 'block';
-}
-
-searchInput.addEventListener('input', renderAC);
-searchInput.addEventListener('keyup', renderAC);
-
-acEl.addEventListener('touchend', function(e) {
-  var item = e.target.closest('.ac-item');
-  if (item) { e.preventDefault(); selectItem(parseInt(item.getAttribute('data-i'))); }
 });
-acEl.addEventListener('mousedown', function(e) {
-  var item = e.target.closest('.ac-item');
-  if (item) { e.preventDefault(); selectItem(parseInt(item.getAttribute('data-i'))); }
-});
-searchInput.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && acResults.length > 0) selectItem(0);
-  else if (e.key === 'Escape') acEl.style.display = 'none';
-});
-document.addEventListener('touchstart', function(e) { if (!e.target.closest('.search-wrap')) acEl.style.display = 'none'; });
-document.addEventListener('click', function(e) { if (!e.target.closest('.search-wrap')) acEl.style.display = 'none'; });
 
-function selectItem(i) {
+// ── 목록 선택 이벤트 ──
+// 전체화면이라 키보드가 없으므로 click 이벤트만으로 완벽 작동
+// 스크롤 중 선택 방지: touchstart/touchend 로 이동거리 측정
+var _sy = 0, _sm = false;
+
+layerList.addEventListener('touchstart', function(e) {
+  _sy = e.touches[0].clientY;
+  _sm = false;
+}, { passive: true });
+
+layerList.addEventListener('touchmove', function(e) {
+  if (Math.abs(e.touches[0].clientY - _sy) > 8) _sm = true;
+}, { passive: true });
+
+layerList.addEventListener('touchend', function(e) {
+  if (_sm) { _sm = false; return; }
+  var item = e.target.closest('.sl-item');
+  if (item) {
+    e.preventDefault();
+    pickItem(parseInt(item.getAttribute('data-i'), 10));
+  }
+}, { passive: false });
+
+// PC 클릭
+layerList.addEventListener('mousedown', function(e) {
+  var item = e.target.closest('.sl-item');
+  if (item) {
+    e.preventDefault();
+    pickItem(parseInt(item.getAttribute('data-i'), 10));
+  }
+});
+
+function pickItem(i) {
   var item = acResults[i];
   if (!item) return;
-  searchInput.value = item.l;
-  acEl.style.display = 'none';
-  searchInput.blur();
+  // 검색 레이어 닫기
+  closeSearch();
+  // 메인 검색 버튼 텍스트 업데이트
+  var btn = document.getElementById('search-btn');
+  var btnText = document.getElementById('search-btn-text');
+  btn.classList.add('has-value');
+  btnText.textContent = item.l;
+  // 결과 표시
   currentKey = item.k;
   setDone('sn1', 'sv1', item.l.split(' ').slice(-2).join(' '));
   showResult(item.k, item.l);
 }
 
+// ── 운송 유형 ──
 function setType(t) {
   currentType = t;
   document.getElementById('btn-왕복').classList.toggle('active', t === '왕복');
   document.getElementById('btn-편도').classList.toggle('active', t === '편도');
   setDone('sn2', 'sv2', t === '왕복' ? '왕복' : '편도(의왕ICD)');
-  if (currentKey) showResult(currentKey, searchInput.value);
+  if (currentKey) showResult(currentKey, document.getElementById('search-btn-text').textContent);
 }
 
+// ── 운임 유형 ──
 var fareDesc = {
   '위탁': '<b style="color:#1a1a1a;font-weight:700">안전위탁운임</b> — 운수사업자가 화물차주에게 지급하는 운임',
   '사업자': '<b style="color:#1a1a1a;font-weight:700">운수사업자간 운임</b> — 운수사업자가 다른 운송사업자에게 위탁 시 지급하는 운임',
@@ -625,6 +563,7 @@ function applyFareHighlight() {
   });
 }
 
+// ── 할증 ──
 function toggleSur(el) {
   var isWeight = el.getAttribute('data-key') === '중량';
   var warn = el.getAttribute('data-warn') === '1';
@@ -678,9 +617,10 @@ function calcSur() {
   surEl.classList.add('show');
 }
 
+// ── 결과 표시 ──
 function showResult(key, label) {
   var entry = TARIFF[key];
-  if (!entry) { alert('데이터를 찾을 수 없습니다. 잠시 후 다시 시도해주세요.'); return; }
+  if (!entry) { alert('데이터를 찾을 수 없습니다.'); return; }
   curEntry = entry;
   var ports = currentType === '왕복'
     ? Object.keys(entry).filter(function(k){return k.indexOf('편도')<0;})
@@ -724,11 +664,7 @@ function setDone(numId, valId, txt) {
 }
 function fmt(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
 setFareType('위탁');
-
-function onVersionChange() {
-  var v = document.getElementById('version-select').value;
-  alert('현재는 ' + document.getElementById('version-select').options[document.getElementById('version-select').selectedIndex].text + ' 데이터만 제공됩니다.\n추후 업데이트 시 이전 고시도 조회 가능합니다.');
-}
+setDone('sn2','sv2','왕복');
 </script>
 </body>
 </html>
