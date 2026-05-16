@@ -28,6 +28,10 @@
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:60px; }
 
+/* PC에서 가운데 정렬 */
+.app-wrap { max-width:480px; margin:0 auto; }
+
+/* 헤더 */
 .header { background:#3d3d3d; padding:0 14px; height:64px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; box-shadow:0 2px 10px rgba(0,0,0,0.25); border-bottom:3px solid var(--mint); }
 .sebang-logo { height:20px; object-fit:contain; filter:brightness(0) invert(1); flex-shrink:0; max-width:85px; }
 .sebang-text { font-size:1.3rem; font-weight:900; font-style:italic; color:#fff; font-family:Arial Black,Impact,sans-serif; white-space:nowrap; flex-shrink:0; }
@@ -37,11 +41,13 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .header-text p { font-size:0.6rem; color:rgba(255,255,255,0.55); margin-top:3px; white-space:nowrap; }
 .vat { font-size:0.62rem; font-weight:700; color:#fff; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.35); padding:4px 9px; border-radius:5px; white-space:nowrap; flex-shrink:0; }
 
+/* 배너 */
 .banner { background:#f5f5f5; border-bottom:1px solid var(--border); padding:8px 18px; display:flex; align-items:center; gap:8px; }
 .banner-label { font-size:0.7rem; color:var(--text2); }
 .banner-select { font-size:0.75rem; font-weight:700; color:var(--gray-dark); background:transparent; border:none; outline:none; cursor:pointer; font-family:inherit; }
 .banner-gov { margin-left:auto; font-size:0.65rem; color:var(--text3); }
 
+/* STEP 카드 */
 .step { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:visible; box-shadow:var(--shadow); position:relative; }
 .step-head { padding:13px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border2); background:var(--bg3); border-radius:calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0; }
 .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:#e8e8e8; border:1.5px solid #c0c0c0; color:var(--text2); font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
@@ -54,74 +60,30 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 /* 검색창 */
 .search-wrap { position:relative; z-index:200; }
 .search-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:16px; pointer-events:none; z-index:1; }
-#search-input {
-  width:100%; padding:14px 14px 14px 42px;
-  background:var(--bg3); border:1.5px solid var(--border);
-  border-radius:var(--radius-sm); font-size:16px;
-  font-family:inherit; color:var(--text); outline:none;
-  -webkit-appearance:none; transition:border-radius 0.1s;
-}
+#search-input { width:100%; padding:14px 14px 14px 42px; background:var(--bg3); border:1.5px solid var(--border); border-radius:var(--radius-sm); font-size:16px; font-family:inherit; color:var(--text); outline:none; -webkit-appearance:none; transition:border-radius 0.1s; }
 #search-input::placeholder { color:var(--text3); }
 #search-input:focus { border-color:var(--gray); background:#fff; }
-#search-input.ac-open {
-  border-bottom-left-radius:0;
-  border-bottom-right-radius:0;
-  border-bottom-color:transparent;
-}
+#search-input.ac-open { border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-color:transparent; }
 
 /* 드롭다운 */
-#ac-wrap {
-  display:none;
-  position:absolute;
-  top:100%;
-  left:0; right:0;
-  background:#fff;
-  border:1.5px solid var(--gray);
-  border-top:none;
-  border-radius:0 0 12px 12px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.15);
-  z-index:300;
-}
-#ac-info {
-  padding:8px 14px;
-  font-size:0.7rem;
-  color:var(--text3);
-  background:#fafafa;
-  border-bottom:1px solid #f0f0f0;
-}
-#ac-list {
-  max-height:260px;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
-}
-.ac-item {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:0 14px;
-  height:50px;
-  font-size:0.9rem;
-  color:#1a1a1a;
-  border-bottom:1px solid #f5f5f5;
-  touch-action:manipulation;
-  user-select:none;
-  -webkit-user-select:none;
-  cursor:pointer;
-}
+#ac-wrap { display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1.5px solid var(--gray); border-top:none; border-radius:0 0 12px 12px; box-shadow:0 8px 24px rgba(0,0,0,0.15); z-index:300; }
+#ac-info { padding:8px 14px; font-size:0.7rem; color:var(--text3); background:#fafafa; border-bottom:1px solid #f0f0f0; }
+#ac-list { max-height:260px; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
+.ac-item { display:flex; align-items:center; gap:10px; padding:0 14px; height:50px; font-size:0.9rem; color:#1a1a1a; border-bottom:1px solid #f5f5f5; touch-action:manipulation; user-select:none; -webkit-user-select:none; cursor:pointer; }
 .ac-item:last-child { border-bottom:none; }
 .ac-item:active { background:#f0f0f0; }
 .ac-icon { color:#ccc; font-size:13px; flex-shrink:0; }
 .ac-match { color:var(--mint); font-weight:700; }
-
 .hint-text { font-size:0.7rem; color:var(--text2); margin-top:8px; line-height:1.7; }
 .hint-text b { color:var(--gray-dark); font-weight:700; }
 
+/* 토글 버튼 */
 .toggle-row { display:grid; gap:8px; }
 .tog-btn { padding:13px 8px; border-radius:var(--radius-sm); border:1.5px solid var(--border); background:var(--bg3); color:var(--text2); font-size:0.85rem; font-weight:600; font-family:inherit; cursor:pointer; text-align:center; transition:all 0.15s; min-height:50px; }
 .tog-btn.active { background:var(--gray); border-color:var(--gray); color:#fff; font-weight:700; }
 .fare-type-desc { font-size:0.72rem; color:var(--text2); margin-top:10px; padding:10px 12px; background:var(--bg3); border-radius:8px; border-left:3px solid var(--gray); border:1px solid var(--border2); border-left:3px solid var(--gray); line-height:1.6; }
 
+/* 할증 */
 .sur-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .sur-item { background:var(--bg3); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:12px; cursor:pointer; transition:all 0.15s; min-height:64px; display:flex; flex-direction:column; justify-content:center; }
 .sur-item.checked { background:#efefef; border-color:var(--gray); }
@@ -141,12 +103,14 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .weight-label { font-size:0.72rem; color:var(--text2); min-width:110px; }
 .weight-input { width:64px; padding:8px; border-radius:7px; background:#fff; border:1.5px solid var(--border); color:var(--text); font-size:0.9rem; font-family:'JetBrains Mono',monospace; text-align:center; outline:none; -webkit-appearance:none; }
 
+/* 로딩 */
 #loading { text-align:center; padding:40px 20px; color:var(--text2); font-size:0.85rem; }
 .spin { display:inline-block; width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--gray); border-radius:50%; animation:sp 0.7s linear infinite; margin-right:8px; vertical-align:middle; }
 @keyframes sp { to{ transform:rotate(360deg) } }
 .load-bar { width:200px; height:4px; background:var(--border); border-radius:2px; margin:12px auto 0; overflow:hidden; }
 .load-fill { height:100%; background:var(--gray); border-radius:2px; transition:width 0.3s; }
 
+/* 결과 */
 #result { display:none; }
 .result-wrap { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
 .result-top { padding:14px 16px; background:var(--gray-dark); border-bottom:3px solid var(--mint); }
@@ -183,86 +147,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .sfv { font-family:'JetBrains Mono',monospace; font-size:1rem; font-weight:800; color:var(--gray-dark); }
 .sur-detail { margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:0.67rem; color:var(--text2); line-height:1.8; }
 .note { margin:10px 14px 0; padding:11px 13px; background:#f0fffe; border:1px solid rgba(0,184,169,0.20); border-left:3px solid var(--mint); border-radius:var(--radius-sm); font-size:0.67rem; color:#006b62; line-height:1.7; }
-
-/* ── 반응형 PC 와이드 레이아웃 ── */
-@media (min-width: 768px) {
-  body { padding-bottom: 0; }
-
-  .header {
-    height: 64px;
-    padding: 0 32px;
-  }
-  .sebang-logo { height: 24px; }
-  .header-text h1 { font-size: 1rem; }
-  .header-text p { font-size: 0.65rem; }
-  .vat { font-size: 0.72rem; padding: 5px 14px; }
-
-  .banner { padding: 10px 32px; }
-
-  /* PC 전체 컨테이너 */
-  .pc-wrap {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px 32px;
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 24px;
-    align-items: start;
-  }
-
-  /* 왼쪽 컬럼 - 검색/설정 */
-  .pc-left { display: flex; flex-direction: column; gap: 16px; }
-
-  /* 오른쪽 컬럼 - 결과 */
-  .pc-right { display: flex; flex-direction: column; gap: 16px; }
-
-  /* 스텝 카드 마진 제거 (PC에서는 wrap이 담당) */
-  .step { margin: 0 !important; }
-  #result { display: block !important; }
-  #loading { display: none !important; }
-
-  .result-wrap { margin: 0 !important; }
-  .sur-result { margin: 0 !important; }
-  .note { margin: 0 !important; }
-
-  /* 검색창 더 크게 */
-  #search-input { font-size: 1rem; padding: 16px 16px 16px 46px; }
-
-  /* 버튼 더 크게 */
-  .tog-btn { font-size: 0.9rem; padding: 14px 8px; }
-
-  /* 운임 카드 폰트 크게 */
-  .fare-row.selected-type .fv { font-size: 1.2rem; }
-  .fv { font-size: 0.9rem; }
-  .fl { font-size: 0.75rem; }
-
-  /* 결과 위치 안내 */
-  .pc-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    background: #fff;
-    border-radius: 14px;
-    border: 2px dashed #d0d0d0;
-    color: #9a9a9a;
-    font-size: 0.9rem;
-    line-height: 2;
-    text-align: center;
-  }
-  .pc-placeholder .icon { font-size: 3rem; margin-bottom: 12px; }
-}
-
-@media (max-width: 767px) {
-  .pc-wrap { display: contents; }
-  .pc-left { display: contents; }
-  .pc-right { display: contents; }
-  .pc-placeholder { display: none; }
-}
 </style>
 </head>
 <body>
+<div class="app-wrap">
 
 <div class="header">
   <img class="sebang-logo" src="https://www.sebang.com/img/logo.png" alt="SEBANG"
@@ -282,9 +170,6 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   </select>
   <span class="banner-gov">국토교통부 제2026-55호</span>
 </div>
-
-<div class="pc-wrap">
-<div class="pc-left">
 
 <div class="step" id="step1">
   <div class="step-head">
@@ -368,16 +253,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   </div>
 </div>
 
-</div><!-- /pc-left -->
-<div class="pc-right">
-
 <div id="loading"><span class="spin"></span>데이터 로딩 중...<div class="load-bar"><div class="load-fill" id="load-fill" style="width:0%"></div></div></div>
-
-<div class="pc-placeholder" id="pc-placeholder">
-  <div class="icon">🚢</div>
-  <div>왼쪽에서 목적지를 검색하면</div>
-  <div>여기에 운임이 표시됩니다</div>
-</div>
 
 <div id="result">
   <div class="result-wrap">
@@ -415,17 +291,19 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   <div class="note">※ VAT 미포함 &nbsp;|&nbsp; 안전위탁: 운수사업자→화물차주 &nbsp;|&nbsp; 안전운송: 화주→운수사업자<br>※ 다중 할증: 최고 100% + 나머지 각 50% (최대 3개 합산)</div>
 </div>
 
-<script src="flat.js?v=20260516c"></script>
-<script src="data0.js?v=20260516c"></script>
-<script src="data1.js?v=20260516c"></script>
-<script src="data2.js?v=20260516c"></script>
-<script src="data3.js?v=20260516c"></script>
-<script src="data4.js?v=20260516c"></script>
-<script src="data5.js?v=20260516c"></script>
-<script src="data6.js?v=20260516c"></script>
-<script src="data7.js?v=20260516c"></script>
-<script src="data8.js?v=20260516c"></script>
-<script src="data9.js?v=20260516c"></script>
+</div><!-- /app-wrap -->
+
+<script src="flat.js?v=20260516d"></script>
+<script src="data0.js?v=20260516d"></script>
+<script src="data1.js?v=20260516d"></script>
+<script src="data2.js?v=20260516d"></script>
+<script src="data3.js?v=20260516d"></script>
+<script src="data4.js?v=20260516d"></script>
+<script src="data5.js?v=20260516d"></script>
+<script src="data6.js?v=20260516d"></script>
+<script src="data7.js?v=20260516d"></script>
+<script src="data8.js?v=20260516d"></script>
+<script src="data9.js?v=20260516d"></script>
 
 <script>
 var TARIFF = {};
@@ -433,33 +311,22 @@ window.addEventListener('load', function() {
   setTimeout(function() {
     for (var i = 0; i < 10; i++) {
       var chunk = window['TARIFF_CHUNK' + i];
-      if (chunk) {
-        var keys = Object.keys(chunk);
-        for (var j = 0; j < keys.length; j++) TARIFF[keys[j]] = chunk[keys[j]];
-      }
+      if (chunk) { var keys = Object.keys(chunk); for (var j = 0; j < keys.length; j++) TARIFF[keys[j]] = chunk[keys[j]]; }
     }
     document.getElementById('load-fill').style.width = '100%';
     document.getElementById('loading').style.display = 'none';
   }, 500);
 });
 
-var acResults = [];
-var currentKey = null, currentType = '왕복', currentFareType = '위탁';
+var acResults = [], currentKey = null, currentType = '왕복', currentFareType = '위탁';
 var curEntry = null, curPortData = null;
-
 var inp = document.getElementById('search-input');
 var acWrap = document.getElementById('ac-wrap');
 var acList = document.getElementById('ac-list');
 var acInfo = document.getElementById('ac-info');
 
-function showAC() {
-  acWrap.style.display = 'block';
-  inp.classList.add('ac-open');
-}
-function hideAC() {
-  acWrap.style.display = 'none';
-  inp.classList.remove('ac-open');
-}
+function showAC() { acWrap.style.display = 'block'; inp.classList.add('ac-open'); }
+function hideAC() { acWrap.style.display = 'none'; inp.classList.remove('ac-open'); }
 
 inp.addEventListener('input', function() {
   var q = inp.value.trim();
@@ -473,22 +340,15 @@ inp.addEventListener('input', function() {
   acInfo.textContent = '검색 결과 ' + acResults.length + '건';
   acList.innerHTML = acResults.map(function(item, i) {
     var label = item.l;
-    tokens.forEach(function(t) {
-      label = label.split(t).join('<span class="ac-match">' + t + '</span>');
-    });
+    tokens.forEach(function(t) { label = label.split(t).join('<span class="ac-match">' + t + '</span>'); });
     return '<div class="ac-item" data-i="' + i + '"><span class="ac-icon">📍</span><span>' + label + '</span></div>';
   }).join('');
   showAC();
 });
 
-// 스크롤/선택 구분
 var _sy = 0, _sm = false;
-acList.addEventListener('touchstart', function(e) {
-  _sy = e.touches[0].clientY; _sm = false;
-}, { passive: true });
-acList.addEventListener('touchmove', function(e) {
-  if (Math.abs(e.touches[0].clientY - _sy) > 8) _sm = true;
-}, { passive: true });
+acList.addEventListener('touchstart', function(e) { _sy = e.touches[0].clientY; _sm = false; }, { passive: true });
+acList.addEventListener('touchmove', function(e) { if (Math.abs(e.touches[0].clientY - _sy) > 8) _sm = true; }, { passive: true });
 acList.addEventListener('touchend', function(e) {
   if (_sm) { _sm = false; return; }
   var item = e.target.closest('.ac-item');
@@ -498,29 +358,20 @@ acList.addEventListener('mousedown', function(e) {
   var item = e.target.closest('.ac-item');
   if (item) { e.preventDefault(); selectItem(parseInt(item.getAttribute('data-i'), 10)); }
 });
-
 inp.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && acResults.length > 0) selectItem(0);
   if (e.key === 'Escape') hideAC();
 });
-document.addEventListener('touchstart', function(e) {
-  if (!e.target.closest('#step1')) hideAC();
-}, { passive: true });
-document.addEventListener('mousedown', function(e) {
-  if (!e.target.closest('#step1')) hideAC();
-});
+document.addEventListener('touchstart', function(e) { if (!e.target.closest('#step1')) hideAC(); }, { passive: true });
+document.addEventListener('mousedown', function(e) { if (!e.target.closest('#step1')) hideAC(); });
 
 function selectItem(i) {
-  var item = acResults[i];
-  if (!item) return;
-  inp.value = item.l;
-  hideAC();
-  inp.blur();
+  var item = acResults[i]; if (!item) return;
+  inp.value = item.l; hideAC(); inp.blur();
   currentKey = item.k;
   setDone('sn1', 'sv1', item.l.split(' ').slice(-2).join(' '));
   showResult(item.k, item.l);
 }
-
 function setType(t) {
   currentType = t;
   document.getElementById('btn-왕복').classList.toggle('active', t === '왕복');
@@ -528,7 +379,6 @@ function setType(t) {
   setDone('sn2', 'sv2', t === '왕복' ? '왕복' : '편도(의왕ICD)');
   if (currentKey) showResult(currentKey, inp.value);
 }
-
 var fareDesc = {
   '위탁': '<b style="color:#1a1a1a;font-weight:700">안전위탁운임</b> — 운수사업자가 화물차주에게 지급하는 운임',
   '사업자': '<b style="color:#1a1a1a;font-weight:700">운수사업자간 운임</b> — 운수사업자가 다른 운송사업자에게 위탁 시 지급하는 운임',
@@ -604,10 +454,7 @@ function calcSur() {
   surEl.classList.add('show');
 }
 function showResult(key, label) {
-  var entry = TARIFF[key];
-  if (!entry) { alert('데이터를 찾을 수 없습니다.'); return; }
-  var ph = document.getElementById('pc-placeholder');
-  if (ph) ph.style.display = 'none';
+  var entry = TARIFF[key]; if (!entry) { alert('데이터를 찾을 수 없습니다.'); return; }
   curEntry = entry;
   var ports = currentType === '왕복'
     ? Object.keys(entry).filter(function(k){return k.indexOf('편도')<0;})
@@ -615,8 +462,7 @@ function showResult(key, label) {
   if (!ports.length) { alert('편도 운임은 수도권 화주공장에서 의왕ICD 반납·수령 시만 적용됩니다.'); return; }
   document.getElementById('r-loc').textContent = label;
   document.getElementById('r-sub').textContent = currentType + ' · 2026년 안전운임 (VAT 별도)';
-  var tabsEl = document.getElementById('port-tabs');
-  tabsEl.innerHTML = '';
+  var tabsEl = document.getElementById('port-tabs'); tabsEl.innerHTML = '';
   ports.forEach(function(p, i) {
     var tab = document.createElement('div');
     tab.className = 'ptab' + (i === 0 ? ' active' : '');
@@ -631,8 +477,7 @@ function showResult(key, label) {
 }
 function selectPort(portName) {
   document.querySelectorAll('.ptab').forEach(function(t) { t.classList.toggle('active', t.getAttribute('data-port') === portName); });
-  var d = curEntry[portName];
-  if (!d) return;
+  var d = curEntry[portName]; if (!d) return;
   curPortData = d;
   document.getElementById('dist-km').textContent = d.dist + ' km';
   document.getElementById('f40-위탁').textContent = fmt(d.f40[0]);
@@ -652,7 +497,5 @@ function fmt(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
 setFareType('위탁');
 setDone('sn2','sv2','왕복');
 </script>
-</div><!-- /pc-right -->
-</div><!-- /pc-wrap -->
 </body>
 </html>
