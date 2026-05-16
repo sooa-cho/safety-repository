@@ -28,6 +28,7 @@
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:60px; }
 
+/* ── 헤더 ── */
 .header { background:#3d3d3d; padding:0 14px; height:64px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:100; box-shadow:0 2px 10px rgba(0,0,0,0.25); border-bottom:3px solid var(--mint); }
 .sebang-logo { height:20px; object-fit:contain; filter:brightness(0) invert(1); flex-shrink:0; max-width:85px; }
 .sebang-text { font-size:1.3rem; font-weight:900; font-style:italic; color:#fff; font-family:Arial Black,Impact,sans-serif; white-space:nowrap; flex-shrink:0; }
@@ -37,21 +38,45 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .header-text p { font-size:0.58rem; color:rgba(255,255,255,0.55); margin-top:3px; white-space:nowrap; }
 .vat { font-size:0.62rem; font-weight:700; color:#fff; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.35); padding:4px 9px; border-radius:5px; white-space:nowrap; flex-shrink:0; }
 
+/* ── 배너 ── */
 .banner { background:#f5f5f5; border-bottom:1px solid var(--border); padding:8px 18px; display:flex; align-items:center; gap:8px; }
 .banner-label { font-size:0.7rem; color:var(--text2); }
 .banner-select { font-size:0.75rem; font-weight:700; color:var(--gray-dark); background:transparent; border:none; outline:none; cursor:pointer; font-family:inherit; }
 .banner-gov { margin-left:auto; font-size:0.65rem; color:var(--text3); }
 
+/* ── STEP 카드 ── */
 .step { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:visible; box-shadow:var(--shadow); position:relative; }
-.step-head { padding:13px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border2); background:var(--bg3); border-radius:calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0; }
+.step-head { padding:12px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border2); background:var(--bg3); border-radius:calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0; }
 .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:#e8e8e8; border:1.5px solid #c0c0c0; color:var(--text2); font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
 .step-num.done { background:var(--mint); color:#fff; border-color:var(--mint); }
 .step-title { font-size:0.85rem; font-weight:700; color:var(--text); }
 .step-tag { font-size:0.65rem; color:var(--text3); font-weight:400; margin-left:4px; }
-.step-val { margin-left:auto; font-size:0.75rem; color:var(--mint); font-weight:700; max-width:50%; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.step-val { font-size:0.75rem; color:var(--mint); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .step-body { padding:14px 16px; }
 
-/* 검색창 */
+/* ── 고정 버튼 ── */
+.pin-btn {
+  margin-left:auto;
+  font-size:0.62rem;
+  font-weight:600;
+  color:var(--text3);
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:5px;
+  padding:4px 9px;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all 0.15s;
+  font-family:inherit;
+  flex-shrink:0;
+}
+.pin-btn.pinned {
+  color:#fff;
+  background:var(--mint);
+  border-color:var(--mint);
+}
+
+/* ── 검색창 ── */
 .search-wrap { position:relative; z-index:200; }
 .search-icon { position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:16px; pointer-events:none; z-index:1; }
 #search-input {
@@ -63,66 +88,36 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 }
 #search-input::placeholder { color:var(--text3); }
 #search-input:focus { border-color:var(--gray); background:#fff; }
-#search-input.ac-open {
-  border-bottom-left-radius:0;
-  border-bottom-right-radius:0;
-  border-bottom-color:transparent;
-}
+#search-input.ac-open { border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-color:transparent; }
 
-/* 드롭다운 */
+/* ── 드롭다운 자동완성 ── */
 #ac-wrap {
-  display:none;
-  position:absolute;
-  top:100%;
-  left:0; right:0;
-  background:#fff;
-  border:1.5px solid var(--gray);
-  border-top:none;
-  border-radius:0 0 12px 12px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.15);
-  z-index:300;
+  display:none; position:absolute; top:100%; left:0; right:0;
+  background:#fff; border:1.5px solid var(--gray); border-top:none;
+  border-radius:0 0 12px 12px; box-shadow:0 8px 24px rgba(0,0,0,0.15); z-index:300;
 }
-#ac-info {
-  padding:8px 14px;
-  font-size:0.7rem;
-  color:var(--text3);
-  background:#fafafa;
-  border-bottom:1px solid #f0f0f0;
-}
-#ac-list {
-  max-height:260px;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
-}
+#ac-info { padding:8px 14px; font-size:0.7rem; color:var(--text3); background:#fafafa; border-bottom:1px solid #f0f0f0; }
+#ac-list { max-height:260px; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
 .ac-item {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:0 14px;
-  height:50px;
-  font-size:0.9rem;
-  color:#1a1a1a;
-  border-bottom:1px solid #f5f5f5;
-  touch-action:manipulation;
-  user-select:none;
-  -webkit-user-select:none;
-  cursor:pointer;
+  display:flex; align-items:center; gap:10px; padding:0 14px; height:50px;
+  font-size:0.9rem; color:#1a1a1a; border-bottom:1px solid #f5f5f5;
+  touch-action:manipulation; user-select:none; -webkit-user-select:none; cursor:pointer;
 }
 .ac-item:last-child { border-bottom:none; }
 .ac-item:active { background:#f0f0f0; }
-.ac-icon { color:#ccc; font-size:13px; flex-shrink:0; }
 .ac-item.keyboard-focus { background:#f0fffe; border-left:3px solid var(--mint); }
+.ac-icon { color:#ccc; font-size:13px; flex-shrink:0; }
 .ac-match { color:var(--mint); font-weight:700; }
-
 .hint-text { font-size:0.7rem; color:var(--text2); margin-top:8px; line-height:1.7; }
 .hint-text b { color:var(--gray-dark); font-weight:700; }
 
+/* ── 토글 버튼 ── */
 .toggle-row { display:grid; gap:8px; }
 .tog-btn { padding:13px 8px; border-radius:var(--radius-sm); border:1.5px solid var(--border); background:var(--bg3); color:var(--text2); font-size:0.85rem; font-weight:600; font-family:inherit; cursor:pointer; text-align:center; transition:all 0.15s; min-height:50px; }
 .tog-btn.active { background:var(--gray); border-color:var(--gray); color:#fff; font-weight:700; }
-.fare-type-desc { font-size:0.72rem; color:var(--text2); margin-top:10px; padding:10px 12px; background:var(--bg3); border-radius:8px; border-left:3px solid var(--gray); border:1px solid var(--border2); border-left:3px solid var(--gray); line-height:1.6; }
+.fare-type-desc { font-size:0.72rem; color:var(--text2); margin-top:10px; padding:10px 12px; background:var(--bg3); border-radius:8px; border:1px solid var(--border2); border-left:3px solid var(--gray); line-height:1.6; }
 
+/* ── 할증 ── */
 .sur-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .sur-item { background:var(--bg3); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:12px; cursor:pointer; transition:all 0.15s; min-height:64px; display:flex; flex-direction:column; justify-content:center; }
 .sur-item.checked { background:#efefef; border-color:var(--gray); }
@@ -142,12 +137,14 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .weight-label { font-size:0.72rem; color:var(--text2); min-width:110px; }
 .weight-input { width:64px; padding:8px; border-radius:7px; background:#fff; border:1.5px solid var(--border); color:var(--text); font-size:0.9rem; font-family:'JetBrains Mono',monospace; text-align:center; outline:none; -webkit-appearance:none; }
 
+/* ── 로딩 ── */
 #loading { text-align:center; padding:40px 20px; color:var(--text2); font-size:0.85rem; }
 .spin { display:inline-block; width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--gray); border-radius:50%; animation:sp 0.7s linear infinite; margin-right:8px; vertical-align:middle; }
 @keyframes sp { to{ transform:rotate(360deg) } }
 .load-bar { width:200px; height:4px; background:var(--border); border-radius:2px; margin:12px auto 0; overflow:hidden; }
 .load-fill { height:100%; background:var(--gray); border-radius:2px; transition:width 0.3s; }
 
+/* ── 결과 ── */
 #result { display:none; }
 .result-wrap { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
 .result-top { padding:14px 16px; background:var(--gray-dark); border-bottom:3px solid var(--mint); }
@@ -175,6 +172,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .fare-row.selected-type .fl { color:var(--gray-dark); font-weight:700; font-size:0.72rem; }
 .fare-row.selected-type .fv { color:var(--gray-dark); font-size:1rem; font-weight:800; }
 .fare-row.dimmed { opacity:0.3; }
+
+/* ── 할증 최종운임 ── */
 .sur-result { margin:10px 14px 0; background:linear-gradient(135deg,#f8f8f8,#f0f0f0); border:1.5px solid var(--gray); border-top:3px solid var(--mint); border-radius:var(--radius-sm); padding:14px 16px; display:none; box-shadow:var(--shadow); }
 .sur-result.show { display:block; }
 .sur-result-title { font-size:0.78rem; color:var(--gray-dark); font-weight:800; margin-bottom:10px; }
@@ -185,56 +184,30 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .sur-detail { margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:0.67rem; color:var(--text2); line-height:1.8; }
 .note { margin:10px 14px 0; padding:11px 13px; background:#f0fffe; border:1px solid rgba(0,184,169,0.20); border-left:3px solid var(--mint); border-radius:var(--radius-sm); font-size:0.67rem; color:#006b62; line-height:1.7; }
 
-/* 고정 버튼 */
-.pin-btn {
-  margin-left:auto;
-  font-size:0.65rem;
-  font-weight:600;
-  color:var(--text3);
-  background:var(--bg3);
-  border:1px solid var(--border);
-  border-radius:5px;
-  padding:3px 8px;
-  cursor:pointer;
-  white-space:nowrap;
-  transition:all 0.15s;
-  font-family:inherit;
-}
-.pin-btn.pinned {
-  color:#fff;
-  background:var(--mint);
-  border-color:var(--mint);
-}
-
 /* ── PC 레이아웃 ── */
-@media (min-width: 768px) {
-  body { padding-bottom: 40px; }
-  .header { height: 64px; padding: 0 40px; }
-  .sebang-logo { height: 22px; }
-  .header-text h1 { font-size: 1.05rem; }
-  .header-text p { font-size: 0.65rem; }
-  .banner { padding: 10px 40px; }
-
-  /* 콘텐츠 꽉 차게 - 최대너비 제한 없음 */
-  .pc-wrap { padding: 0 24px; }
-
-  /* 스텝 카드 마진 조정 */
-  .step { margin: 16px 0 0; }
-  .result-wrap { margin: 16px 0 0; }
-  .sur-result { margin: 10px 0 0; }
-  .note { margin: 10px 0 16px; }
-
-  /* 폰트 약간 크게 */
-  #search-input { font-size: 1rem; }
-  .tog-btn { font-size: 0.9rem; padding: 14px 10px; }
-  .step-title { font-size: 0.92rem; }
-  .fl { font-size: 0.72rem; }
-  .fv { font-size: 0.85rem; }
+@media (min-width:768px) {
+  body { padding-bottom:40px; }
+  .header { height:64px; padding:0 40px; }
+  .sebang-logo { height:22px; }
+  .header-text h1 { font-size:1.05rem; }
+  .header-text p { font-size:0.65rem; }
+  .banner { padding:10px 40px; }
+  .pc-wrap { padding:0 24px; }
+  .step { margin:16px 0 0; }
+  .result-wrap { margin:16px 0 0; }
+  .sur-result { margin:10px 0 0; }
+  .note { margin:10px 0 16px; }
+  #search-input { font-size:1rem; }
+  .tog-btn { font-size:0.9rem; padding:14px 10px; }
+  .step-title { font-size:0.92rem; }
+  .fl { font-size:0.72rem; }
+  .fv { font-size:0.85rem; }
 }
 </style>
 </head>
 <body>
 
+<!-- 헤더 -->
 <div class="header">
   <img class="sebang-logo" src="https://www.sebang.com/img/logo.png" alt="SEBANG"
     onerror="this.outerHTML='<span class=&quot;sebang-text&quot;>SEBANG</span>'">
@@ -246,6 +219,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   <div class="vat">VAT 별도</div>
 </div>
 
+<!-- 배너 -->
 <div class="banner">
   <span class="banner-label">📋 적용 고시:</span>
   <select class="banner-select" onchange="alert('현재는 2026년 2월 고시 데이터만 제공됩니다.')">
@@ -256,11 +230,12 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 
 <div class="pc-wrap">
 
+<!-- STEP 1: 목적지 검색 -->
 <div class="step" id="step1">
   <div class="step-head">
     <div class="step-num" id="sn1">1</div>
     <span class="step-title">목적지 검색</span>
-    <span class="step-val" id="sv1"></span>
+    <span class="step-val" id="sv1" style="margin-left:auto;"></span>
   </div>
   <div class="step-body">
     <div class="search-wrap">
@@ -278,11 +253,13 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   </div>
 </div>
 
+<!-- STEP 2: 운송 유형 -->
 <div class="step">
   <div class="step-head">
     <div class="step-num" id="sn2">2</div>
     <span class="step-title">운송 유형</span>
-    <span class="step-val" id="sv2"></span>
+    <span class="step-val" id="sv2" style="margin-left:8px;"></span>
+    <button class="pin-btn" id="pin-type" onclick="togglePin('type')">📌 고정</button>
   </div>
   <div class="step-body">
     <div class="toggle-row" style="grid-template-columns:1fr 1fr;">
@@ -292,11 +269,13 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   </div>
 </div>
 
+<!-- STEP 3: 운임 유형 -->
 <div class="step">
   <div class="step-head">
     <div class="step-num" id="sn3">3</div>
     <span class="step-title">운임 유형</span>
-    <span class="step-val" id="sv3"></span>
+    <span class="step-val" id="sv3" style="margin-left:8px;"></span>
+    <button class="pin-btn" id="pin-fare" onclick="togglePin('fare')">📌 고정</button>
   </div>
   <div class="step-body">
     <div class="toggle-row" style="grid-template-columns:1fr 1fr 1fr;">
@@ -304,15 +283,16 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
       <button class="tog-btn" id="ft-사업자" onclick="setFareType('사업자')">사업자간</button>
       <button class="tog-btn" id="ft-운송" onclick="setFareType('운송')">안전운송</button>
     </div>
-    <div class="fare-type-desc" id="ftdesc" style="display:none;"><b style="color:#1a1a1a;font-weight:700">안전위탁운임</b> — 운수사업자가 화물차주에게 지급하는 운임</div>
+    <div class="fare-type-desc" id="ftdesc" style="display:none;"></div>
   </div>
 </div>
 
+<!-- STEP 4: 할증 -->
 <div class="step">
   <div class="step-head">
     <div class="step-num" id="sn4">4</div>
     <span class="step-title">할증 <span class="step-tag">(선택사항)</span></span>
-    <span class="step-val" id="sv4"></span>
+    <span class="step-val" id="sv4" style="margin-left:auto;"></span>
   </div>
   <div class="step-body">
     <div class="sur-grid">
@@ -338,12 +318,16 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   </div>
 </div>
 
-
+<!-- 로딩 -->
 <div id="loading"><span class="spin"></span>데이터 로딩 중...<div class="load-bar"><div class="load-fill" id="load-fill" style="width:0%"></div></div></div>
 
+<!-- 결과 -->
 <div id="result">
   <div class="result-wrap">
-    <div class="result-top"><div class="result-loc" id="r-loc">-</div><div class="result-sub" id="r-sub">-</div></div>
+    <div class="result-top">
+      <div class="result-loc" id="r-loc">-</div>
+      <div class="result-sub" id="r-sub">-</div>
+    </div>
     <div class="port-scroll"><div class="port-tabs" id="port-tabs"></div></div>
     <div class="fare-area">
       <div class="fare-cards">
@@ -366,6 +350,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
       </div>
     </div>
   </div>
+  <!-- 할증 최종운임 -->
   <div class="sur-result" id="sur-result">
     <div class="sur-result-title">⚡ 할증 적용 최종운임</div>
     <div class="sur-final-grid">
@@ -377,19 +362,22 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   <div class="note">※ VAT 미포함 &nbsp;|&nbsp; 안전위탁: 운수사업자→화물차주 &nbsp;|&nbsp; 안전운송: 화주→운수사업자<br>※ 다중 할증: 최고 100% + 나머지 각 50% (최대 3개 합산)</div>
 </div>
 
-<script src="flat.js?v=20260516c"></script>
-<script src="data0.js?v=20260516c"></script>
-<script src="data1.js?v=20260516c"></script>
-<script src="data2.js?v=20260516c"></script>
-<script src="data3.js?v=20260516c"></script>
-<script src="data4.js?v=20260516c"></script>
-<script src="data5.js?v=20260516c"></script>
-<script src="data6.js?v=20260516c"></script>
-<script src="data7.js?v=20260516c"></script>
-<script src="data8.js?v=20260516c"></script>
-<script src="data9.js?v=20260516c"></script>
+</div><!-- /pc-wrap -->
+
+<script src="flat.js?v=20260517b"></script>
+<script src="data0.js?v=20260517b"></script>
+<script src="data1.js?v=20260517b"></script>
+<script src="data2.js?v=20260517b"></script>
+<script src="data3.js?v=20260517b"></script>
+<script src="data4.js?v=20260517b"></script>
+<script src="data5.js?v=20260517b"></script>
+<script src="data6.js?v=20260517b"></script>
+<script src="data7.js?v=20260517b"></script>
+<script src="data8.js?v=20260517b"></script>
+<script src="data9.js?v=20260517b"></script>
 
 <script>
+// ── 데이터 로딩 ──
 var TARIFF = {};
 window.addEventListener('load', function() {
   setTimeout(function() {
@@ -405,23 +393,53 @@ window.addEventListener('load', function() {
   }, 500);
 });
 
+// ── 상태 변수 ──
 var acResults = [];
-var currentKey = null, currentType = null, currentFareType = null;
-var curEntry = null, curPortData = null;
+var currentKey = null;   // 선택된 목적지 키
+var currentLabel = '';   // 선택된 목적지 이름
+var currentType = null;  // 운송 유형 (왕복/편도) - 초기 미선택
+var currentFareType = null; // 운임 유형 - 초기 미선택
+var curEntry = null;
+var curPortData = null;
 
+// ── 고정 기능 (세션 중에만 유지, 껐다 켜면 초기화) ──
+var pinnedType = null;
+var pinnedFare = null;
+
+function togglePin(which) {
+  if (which === 'type') {
+    if (pinnedType) {
+      pinnedType = null;
+      document.getElementById('pin-type').classList.remove('pinned');
+      document.getElementById('pin-type').textContent = '📌 고정';
+    } else {
+      if (!currentType) { alert('먼저 운송 유형을 선택해주세요!'); return; }
+      pinnedType = currentType;
+      document.getElementById('pin-type').classList.add('pinned');
+      document.getElementById('pin-type').textContent = '📌 고정됨';
+    }
+  } else {
+    if (pinnedFare) {
+      pinnedFare = null;
+      document.getElementById('pin-fare').classList.remove('pinned');
+      document.getElementById('pin-fare').textContent = '📌 고정';
+    } else {
+      if (!currentFareType) { alert('먼저 운임 유형을 선택해주세요!'); return; }
+      pinnedFare = currentFareType;
+      document.getElementById('pin-fare').classList.add('pinned');
+      document.getElementById('pin-fare').textContent = '📌 고정됨';
+    }
+  }
+}
+
+// ── 자동완성 ──
 var inp = document.getElementById('search-input');
 var acWrap = document.getElementById('ac-wrap');
 var acList = document.getElementById('ac-list');
 var acInfo = document.getElementById('ac-info');
 
-function showAC() {
-  acWrap.style.display = 'block';
-  inp.classList.add('ac-open');
-}
-function hideAC() {
-  acWrap.style.display = 'none';
-  inp.classList.remove('ac-open');
-}
+function showAC() { acWrap.style.display = 'block'; inp.classList.add('ac-open'); }
+function hideAC() { acWrap.style.display = 'none'; inp.classList.remove('ac-open'); }
 
 inp.addEventListener('input', function() {
   var q = inp.value.trim();
@@ -441,16 +459,13 @@ inp.addEventListener('input', function() {
     return '<div class="ac-item" data-i="' + i + '"><span class="ac-icon">📍</span><span>' + label + '</span></div>';
   }).join('');
   showAC();
+  kbIndex = -1;
 });
 
-// 스크롤/선택 구분
+// 터치 스크롤/선택 구분
 var _sy = 0, _sm = false;
-acList.addEventListener('touchstart', function(e) {
-  _sy = e.touches[0].clientY; _sm = false;
-}, { passive: true });
-acList.addEventListener('touchmove', function(e) {
-  if (Math.abs(e.touches[0].clientY - _sy) > 8) _sm = true;
-}, { passive: true });
+acList.addEventListener('touchstart', function(e) { _sy = e.touches[0].clientY; _sm = false; }, { passive: true });
+acList.addEventListener('touchmove', function(e) { if (Math.abs(e.touches[0].clientY - _sy) > 8) _sm = true; }, { passive: true });
 acList.addEventListener('touchend', function(e) {
   if (_sm) { _sm = false; return; }
   var item = e.target.closest('.ac-item');
@@ -461,20 +476,17 @@ acList.addEventListener('mousedown', function(e) {
   if (item) { e.preventDefault(); selectItem(parseInt(item.getAttribute('data-i'), 10)); }
 });
 
-// 키보드 포커스 인덱스
+// 키보드 방향키
 var kbIndex = -1;
-
 function setKbFocus(idx) {
   var items = acList.querySelectorAll('.ac-item');
   items.forEach(function(el) { el.classList.remove('keyboard-focus'); });
   kbIndex = idx;
   if (idx >= 0 && idx < items.length) {
     items[idx].classList.add('keyboard-focus');
-    // 스크롤해서 보이게
     items[idx].scrollIntoView({ block: 'nearest' });
   }
 }
-
 inp.addEventListener('keydown', function(e) {
   var items = acList.querySelectorAll('.ac-item');
   if (e.key === 'ArrowDown') {
@@ -487,20 +499,14 @@ inp.addEventListener('keydown', function(e) {
     setKbFocus(Math.max(kbIndex - 1, 0));
   } else if (e.key === 'Enter') {
     e.preventDefault();
-    if (kbIndex >= 0 && kbIndex < acResults.length) {
-      selectItem(kbIndex);
-    } else if (acResults.length > 0) {
-      selectItem(0);
-    }
+    if (kbIndex >= 0 && kbIndex < acResults.length) selectItem(kbIndex);
+    else if (acResults.length > 0) selectItem(0);
   } else if (e.key === 'Escape') {
     hideAC();
   }
 });
 
-// 검색어 바뀌면 키보드 인덱스 초기화
-inp.addEventListener('input', function() {
-  kbIndex = -1;
-});
+// 외부 클릭 시 닫기
 document.addEventListener('touchstart', function(e) {
   if (!e.target.closest('#step1')) hideAC();
 }, { passive: true });
@@ -512,34 +518,28 @@ function selectItem(i) {
   var item = acResults[i];
   if (!item) return;
   inp.value = item.l;
+  currentLabel = item.l;
   hideAC();
   inp.blur();
   currentKey = item.k;
   setDone('sn1', 'sv1', item.l.split(' ').slice(-2).join(' '));
   // 고정값 자동 적용
-  if (pinnedType) setType(pinnedType);
-  if (pinnedFare) setFareType(pinnedFare);
-  // 운송유형, 운임유형 모두 선택됐을 때만 결과 표시
-  if (currentType && currentFareType) {
-    showResult(item.k, item.l);
-  } else {
-    document.getElementById('result').style.display = 'none';
-  }
+  if (pinnedType && !currentType) setType(pinnedType);
+  if (pinnedFare && !currentFareType) setFareType(pinnedFare);
+  // 3가지 모두 선택됐으면 결과 표시
+  tryShowResult();
 }
 
+// ── 운송 유형 ──
 function setType(t) {
   currentType = t;
   document.getElementById('btn-왕복').classList.toggle('active', t === '왕복');
   document.getElementById('btn-편도').classList.toggle('active', t === '편도');
   setDone('sn2', 'sv2', t === '왕복' ? '왕복' : '편도(의왕ICD)');
-  // 목적지 + 운임유형 모두 선택됐을 때만 결과 표시
-  if (currentKey && currentFareType) {
-    showResult(currentKey, inp.value);
-  } else {
-    document.getElementById('result').style.display = 'none';
-  }
+  tryShowResult();
 }
 
+// ── 운임 유형 ──
 var fareDesc = {
   '위탁': '<b style="color:#1a1a1a;font-weight:700">안전위탁운임</b> — 운수사업자가 화물차주에게 지급하는 운임',
   '사업자': '<b style="color:#1a1a1a;font-weight:700">운수사업자간 운임</b> — 운수사업자가 다른 운송사업자에게 위탁 시 지급하는 운임',
@@ -547,19 +547,28 @@ var fareDesc = {
 };
 function setFareType(t) {
   currentFareType = t;
-  ['위탁','사업자','운송'].forEach(function(k) { document.getElementById('ft-'+k).classList.toggle('active', k === t); });
-  document.getElementById('ftdesc').innerHTML = fareDesc[t];
-  document.getElementById('ftdesc').style.display = 'block';
+  ['위탁','사업자','운송'].forEach(function(k) {
+    document.getElementById('ft-'+k).classList.toggle('active', k === t);
+  });
+  var ftdesc = document.getElementById('ftdesc');
+  ftdesc.innerHTML = fareDesc[t];
+  ftdesc.style.display = 'block';
   setDone('sn3', 'sv3', t === '위탁' ? '안전위탁' : t === '사업자' ? '사업자간' : '안전운송');
-  // 목적지 + 운송유형 모두 선택됐을 때만 결과 표시
-  if (currentKey && currentType) {
-    showResult(currentKey, inp.value);
+  applyFareHighlight();
+  calcSur();
+  tryShowResult();
+}
+
+// ── 3가지 모두 선택됐을 때만 결과 표시 ──
+function tryShowResult() {
+  if (currentKey && currentType && currentFareType) {
+    showResult();
   } else {
     document.getElementById('result').style.display = 'none';
-    applyFareHighlight();
-    calcSur();
   }
 }
+
+// ── 운임 강조 ──
 function applyFareHighlight() {
   if (!currentFareType) return;
   var idx = {'위탁':0,'사업자':1,'운송':2}[currentFareType];
@@ -571,6 +580,8 @@ function applyFareHighlight() {
     });
   });
 }
+
+// ── 할증 ──
 function toggleSur(el) {
   var isWeight = el.getAttribute('data-key') === '중량';
   var warn = el.getAttribute('data-warn') === '1';
@@ -596,47 +607,62 @@ function getSurRates() {
   return rates;
 }
 function calcMulti(arr) {
-  var s = arr.slice().sort(function(a,b){return b-a;});
+  var s = arr.slice().sort(function(a,b){ return b-a; });
   if (!s.length) return 0;
   var t = s[0];
-  for (var i=1; i<Math.min(s.length,3); i++) t += s[i]*0.5;
+  for (var i = 1; i < Math.min(s.length, 3); i++) t += s[i] * 0.5;
   return t;
 }
 function calcSur() {
   var rates = getSurRates();
   var checked = document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').length;
-  if (checked > 0) setDone('sn4','sv4', checked+'개 적용');
-  else { var sn=document.getElementById('sn4'); sn.classList.remove('done'); sn.textContent='4'; document.getElementById('sv4').textContent=''; }
+  // 4번 단계 체크 표시
+  if (checked > 0) {
+    setDone('sn4', 'sv4', checked + '개 적용');
+  } else {
+    var sn = document.getElementById('sn4');
+    sn.classList.remove('done');
+    sn.textContent = '4';
+    document.getElementById('sv4').textContent = '';
+  }
   var surEl = document.getElementById('sur-result');
-  if (!curPortData || rates.length === 0) { surEl.classList.remove('show'); return; }
-  var idx = {'위탁':0,'사업자':1,'운송':2}[currentFareType];
-  var common = rates.filter(function(r){return !r.ft;}).map(function(r){return r.rate;});
-  var rate40 = calcMulti(common.concat(rates.filter(function(r){return r.ft==='40';}).map(function(r){return r.rate;})));
-  var rate20 = calcMulti(common.concat(rates.filter(function(r){return r.ft==='20';}).map(function(r){return r.rate;})));
-  var final40 = Math.round(curPortData.f40[idx]*(1+rate40/100)/10)*10;
-  var final20 = Math.round(curPortData.f20[idx]*(1+rate20/100)/10)*10;
-  var lbl = {'위탁':'안전위탁','사업자':'사업자간','운송':'안전운송'}[currentFareType];
-  document.getElementById('sr-label-40').textContent = '40FT '+lbl+' (최종)';
-  document.getElementById('sr-label-20').textContent = '20FT '+lbl+' (최종)';
-  document.getElementById('sr-f40').textContent = fmt(final40);
-  document.getElementById('sr-f20').textContent = fmt(final20);
-  document.getElementById('sur-detail').textContent = '적용: '+rates.map(function(r){return r.label;}).join(', ')+' / 40FT '+rate40.toFixed(1)+'% · 20FT '+rate20.toFixed(1)+'%';
-  surEl.classList.add('show');
-}
-function showResult(key, label) {
-  // 목적지 + 운송유형 + 운임유형 3가지 모두 선택해야 결과 표시
-  if (!key || !currentType || !currentFareType) {
-    document.getElementById('result').style.display = 'none';
+  if (!curPortData || rates.length === 0) {
+    surEl.classList.remove('show');
     return;
   }
-  var entry = TARIFF[key];
+  if (!currentFareType) return;
+  var idx = {'위탁':0,'사업자':1,'운송':2}[currentFareType];
+  var common = rates.filter(function(r){ return !r.ft; }).map(function(r){ return r.rate; });
+  var rate40 = calcMulti(common.concat(rates.filter(function(r){ return r.ft === '40'; }).map(function(r){ return r.rate; })));
+  var rate20 = calcMulti(common.concat(rates.filter(function(r){ return r.ft === '20'; }).map(function(r){ return r.rate; })));
+  var final40 = Math.round(curPortData.f40[idx] * (1 + rate40 / 100) / 10) * 10;
+  var final20 = Math.round(curPortData.f20[idx] * (1 + rate20 / 100) / 10) * 10;
+  var lbl = {'위탁':'안전위탁','사업자':'사업자간','운송':'안전운송'}[currentFareType];
+  document.getElementById('sr-label-40').textContent = '40FT ' + lbl + ' (최종)';
+  document.getElementById('sr-label-20').textContent = '20FT ' + lbl + ' (최종)';
+  document.getElementById('sr-f40').textContent = fmt(final40);
+  document.getElementById('sr-f20').textContent = fmt(final20);
+  document.getElementById('sur-detail').textContent = '적용: ' + rates.map(function(r){ return r.label; }).join(', ') + ' / 40FT ' + rate40.toFixed(1) + '% · 20FT ' + rate20.toFixed(1) + '%';
+  surEl.classList.add('show');
+  // 할증 최종운임으로 스크롤
+  setTimeout(function() {
+    surEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+}
+
+// ── 결과 표시 ──
+function showResult() {
+  var entry = TARIFF[currentKey];
   if (!entry) { alert('데이터를 찾을 수 없습니다.'); return; }
   curEntry = entry;
   var ports = currentType === '왕복'
-    ? Object.keys(entry).filter(function(k){return k.indexOf('편도')<0;})
-    : Object.keys(entry).filter(function(k){return k.indexOf('편도')>=0;});
-  if (!ports.length) { alert('편도 운임은 수도권 화주공장에서 의왕ICD 반납·수령 시만 적용됩니다.'); return; }
-  document.getElementById('r-loc').textContent = label;
+    ? Object.keys(entry).filter(function(k){ return k.indexOf('편도') < 0; })
+    : Object.keys(entry).filter(function(k){ return k.indexOf('편도') >= 0; });
+  if (!ports.length) {
+    alert('편도 운임은 수도권 화주공장에서 의왕ICD 반납·수령 시만 적용됩니다.');
+    return;
+  }
+  document.getElementById('r-loc').textContent = currentLabel;
   document.getElementById('r-sub').textContent = currentType + ' · 2026년 안전운임 (VAT 별도)';
   var tabsEl = document.getElementById('port-tabs');
   tabsEl.innerHTML = '';
@@ -644,16 +670,21 @@ function showResult(key, label) {
     var tab = document.createElement('div');
     tab.className = 'ptab' + (i === 0 ? ' active' : '');
     tab.setAttribute('data-port', p);
-    tab.textContent = p.replace('(편도)','');
+    tab.textContent = p.replace('(편도)', '');
     tab.addEventListener('click', function() { selectPort(p); });
     tabsEl.appendChild(tab);
   });
   selectPort(ports[0]);
   document.getElementById('result').style.display = 'block';
-  setTimeout(function() { document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'}); }, 150);
+  setTimeout(function() {
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
 }
+
 function selectPort(portName) {
-  document.querySelectorAll('.ptab').forEach(function(t) { t.classList.toggle('active', t.getAttribute('data-port') === portName); });
+  document.querySelectorAll('.ptab').forEach(function(t) {
+    t.classList.toggle('active', t.getAttribute('data-port') === portName);
+  });
   var d = curEntry[portName];
   if (!d) return;
   curPortData = d;
@@ -664,8 +695,10 @@ function selectPort(portName) {
   document.getElementById('f20-위탁').textContent = fmt(d.f20[0]);
   document.getElementById('f20-사업자').textContent = fmt(d.f20[1]);
   document.getElementById('f20-운송').textContent = fmt(d.f20[2]);
-  applyFareHighlight(); calcSur();
+  applyFareHighlight();
+  calcSur();
 }
+
 function setDone(numId, valId, txt) {
   var el = document.getElementById(numId);
   el.classList.add('done');
@@ -673,41 +706,6 @@ function setDone(numId, valId, txt) {
   document.getElementById(valId).textContent = txt;
 }
 function fmt(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
-// ── 고정 기능 ──
-// 세션 중에만 유지 (껐다 켜면 초기화)
-var pinnedType = null;
-var pinnedFare = null;
-
-function togglePin(which) {
-  if (which === 'type') {
-    if (pinnedType) {
-      // 고정 해제
-      pinnedType = null;
-      document.getElementById('pin-type').classList.remove('pinned');
-      document.getElementById('pin-type').textContent = '📌 고정';
-    } else {
-      if (!currentType) { alert('먼저 운송 유형을 선택해주세요!'); return; }
-      pinnedType = currentType;
-      document.getElementById('pin-type').classList.add('pinned');
-      document.getElementById('pin-type').textContent = '📌 고정됨';
-    }
-  } else {
-    if (pinnedFare) {
-      // 고정 해제
-      pinnedFare = null;
-      document.getElementById('pin-fare').classList.remove('pinned');
-      document.getElementById('pin-fare').textContent = '📌 고정';
-    } else {
-      if (!currentFareType) { alert('먼저 운임 유형을 선택해주세요!'); return; }
-      pinnedFare = currentFareType;
-      document.getElementById('pin-fare').classList.add('pinned');
-      document.getElementById('pin-fare').textContent = '📌 고정됨';
-    }
-  }
-}
-
-// 초기값 없음 - 사용자가 직접 선택
 </script>
-</div><!-- /pc-wrap -->
 </body>
 </html>
