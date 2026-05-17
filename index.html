@@ -562,11 +562,11 @@ function applyFareHighlight() {
 }
 
 // ── 할증 ──
-function scrollTo(el, offset) {
-  if (!el) return;
-  var rect = el.getBoundingClientRect();
-  var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  window.scrollTo({ top: scrollTop + rect.top - (offset || 80), behavior: 'smooth' });
+function doScroll(targetEl) {
+  if (!targetEl) return;
+  var rect = targetEl.getBoundingClientRect();
+  var y = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 80;
+  window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
 function toggleSur(el) {
@@ -574,30 +574,28 @@ function toggleSur(el) {
   var warn = el.getAttribute('data-warn') === '1';
   var was = el.classList.contains('checked') || el.classList.contains('checked-warn');
 
-  // calcSur 전에 sur-result 보임 여부 저장
+  // calcSur 호출 전에 sur-result 보임 여부 저장
   var surWasShowing = document.getElementById('sur-result').classList.contains('show');
 
+  // 체크 상태 변경
   el.classList.remove('checked', 'checked-warn');
   if (!was) el.classList.add(warn ? 'checked-warn' : 'checked');
   if (isWeight) document.getElementById('weight-wrap').classList.toggle('show', !was);
 
+  // 해제 후 남은 개수 (상태 변경 후 바로 카운트)
+  var remaining = document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').length;
+
   calcSur();
 
-  // 할증 선택 → sur-result로 스크롤
   if (!was) {
+    // 할증 선택 → sur-result로 스크롤
     setTimeout(function() {
-      var surEl = document.getElementById('sur-result');
-      if (surEl.classList.contains('show')) scrollTo(surEl, 80);
+      doScroll(document.getElementById('sur-result'));
     }, 300);
-    return;
-  }
-
-  // 할증 해제 → 남은 할증 없고 이전에 sur-result 보이고 있었으면 result-wrap으로 스크롤
-  var remaining = document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').length;
-  if (remaining === 0 && surWasShowing) {
+  } else if (remaining === 0 && surWasShowing) {
+    // 할증 전체 해제 → result-wrap으로 스크롤
     setTimeout(function() {
-      var resultWrap = document.querySelector('.result-wrap');
-      if (resultWrap) scrollTo(resultWrap, 80);
+      doScroll(document.querySelector('.result-wrap'));
     }, 300);
   }
 }
