@@ -168,6 +168,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 /* ── 인라인 에러 ── */
 #inline-error { display:none; margin:10px 14px 0; padding:11px 13px; background:#fff0f0; border:1px solid rgba(200,0,0,0.20); border-left:3px solid #c00; border-radius:var(--radius-sm); font-size:0.72rem; color:#c00; line-height:1.7; }
 
+/* ── 오프라인 배지 ── */
+#offline-badge { display:none; position:fixed; bottom:14px; left:50%; transform:translateX(-50%); background:#555; color:#fff; font-size:0.7rem; font-weight:700; padding:6px 14px; border-radius:20px; z-index:999; white-space:nowrap; box-shadow:0 2px 10px rgba(0,0,0,0.25); }
+#offline-badge.show { display:block; }
+
 /* ── PC 레이아웃 ── */
 @media (min-width:768px) {
   body { padding-bottom:40px; }
@@ -350,6 +354,9 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   </div>
   <div class="note" id="result-note">※ VAT 미포함 &nbsp;|&nbsp; 안전위탁: 운수사업자→화물차주 &nbsp;|&nbsp; 사업자간: 운수사업자→운수사업자 &nbsp;|&nbsp; 안전운송: 화주→운수사업자<br>※ 다중 할증: 최고 100% + 나머지 각 50% (최대 3개 합산)</div>
 </div>
+
+<!-- 오프라인 배지 -->
+<div id="offline-badge">📵 오프라인 — 캐시된 데이터 사용 중</div>
 
 </div><!-- /pc-wrap -->
 
@@ -978,6 +985,27 @@ document.querySelectorAll('.sur-item').forEach(function (el) {
 
 document.getElementById('w40').addEventListener('input', calcSur);
 document.getElementById('w20').addEventListener('input', calcSur);
+
+// ────────────────────────────────────────────
+// Service Worker 등록
+// ────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .catch(function (err) { console.warn('SW 등록 실패:', err); });
+}
+
+// ────────────────────────────────────────────
+// 오프라인/온라인 상태 감지
+// ────────────────────────────────────────────
+(function () {
+  const badge = document.getElementById('offline-badge');
+  function updateOnlineStatus() {
+    badge.classList.toggle('show', !navigator.onLine);
+  }
+  window.addEventListener('online',  updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
+})();
 
 // ────────────────────────────────────────────
 // 시작
