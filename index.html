@@ -40,23 +40,20 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 
 /* ── 배너 ── */
 .banner { background:#f5f5f5; border-bottom:1px solid var(--border); padding:8px 18px; display:flex; align-items:center; gap:8px; }
-.banner-label { font-size:0.7rem; color:var(--text2); }
+.banner-label { font-size:0.7rem; color:var(--text2); flex-shrink:0; }
 .banner-select { font-size:0.75rem; font-weight:700; color:var(--gray-dark); background:transparent; border:none; outline:none; cursor:pointer; font-family:inherit; }
-.banner-gov { margin-left:auto; font-size:0.65rem; color:var(--text3); }
+.banner-gov { margin-left:auto; font-size:0.65rem; color:var(--text3); white-space:nowrap; }
 
 /* ── STEP 카드 ── */
 .step { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:visible; box-shadow:var(--shadow); position:relative; }
 .step-head { padding:12px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border2); background:var(--bg3); border-radius:calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0; }
 .step-num { width:26px; height:26px; border-radius:50%; flex-shrink:0; background:#e8e8e8; border:1.5px solid #c0c0c0; color:var(--text2); font-size:0.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
-.step-num.done { cursor:pointer; }
+.step-num.done { cursor:pointer; background:var(--mint); color:#fff; border-color:var(--mint); }
 .step-num.done:active { transform:scale(0.9); }
-.step-num.done { background:var(--mint); color:#fff; border-color:var(--mint); }
 .step-title { font-size:0.85rem; font-weight:700; color:var(--text); }
 .step-tag { font-size:0.65rem; color:var(--text3); font-weight:400; margin-left:4px; }
 .step-val { font-size:0.75rem; color:var(--mint); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .step-body { padding:14px 16px; }
-
-
 
 /* ── 검색창 ── */
 .search-wrap { position:relative; z-index:200; }
@@ -71,6 +68,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 #search-input::placeholder { color:var(--text3); }
 #search-input:focus { border-color:var(--gray); background:#fff; }
 #search-input.ac-open { border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-color:transparent; }
+#search-input:disabled { opacity:0.5; cursor:not-allowed; }
 
 /* ── 드롭다운 자동완성 ── */
 #ac-wrap {
@@ -122,10 +120,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 /* ── 로딩 ── */
 #loading { text-align:center; padding:40px 20px; color:var(--text2); font-size:0.85rem; }
 .spin { display:inline-block; width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--gray); border-radius:50%; animation:sp 0.7s linear infinite; margin-right:8px; vertical-align:middle; }
-@keyframes sp { to{ transform:rotate(360deg) } }
+@keyframes sp { to { transform:rotate(360deg); } }
 .load-bar { width:200px; height:4px; background:var(--border); border-radius:2px; margin:12px auto 0; overflow:hidden; }
-.load-fill { height:100%; background:var(--gray); border-radius:2px; transition:width 0.3s; animation:loadpulse 1.5s ease-in-out; }
-@keyframes loadpulse { from { width:0% } to { width:80% } }
+.load-fill { height:100%; background:var(--gray); border-radius:2px; transition:width 0.25s ease; }
+#load-text { font-size:0.72rem; color:var(--text3); margin-top:8px; }
 
 /* ── 결과 ── */
 #result { display:none; }
@@ -157,7 +155,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .fare-row.dimmed { opacity:0.3; }
 
 /* ── 할증 최종운임 ── */
-.sur-result { margin:10px 14px 0; background:linear-gradient(135deg,#f8f8f8,#f0f0f0); border:1.5px solid var(--gray); border-top:3px solid var(--mint); border-radius:var(--radius-sm); padding:14px 16px; box-shadow:var(--shadow); scroll-margin-top:80px; visibility:hidden; height:0; overflow:hidden; padding:0; margin-top:0; border:none; }
+.sur-result { margin:10px 14px 0; background:linear-gradient(135deg,#f8f8f8,#f0f0f0); border:1.5px solid var(--gray); border-top:3px solid var(--mint); border-radius:var(--radius-sm); box-shadow:var(--shadow); scroll-margin-top:80px; visibility:hidden; height:0; overflow:hidden; padding:0; margin-top:0; border:none; }
 .sur-result.show { visibility:visible; height:auto; overflow:visible; padding:14px 16px; margin-top:10px; border:1.5px solid var(--gray); border-top:3px solid var(--mint); margin-bottom:0; }
 .sur-result-title { font-size:0.78rem; color:var(--gray-dark); font-weight:800; margin-bottom:10px; }
 .sur-final-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -166,6 +164,9 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .sfv { font-family:'JetBrains Mono',monospace; font-size:1rem; font-weight:800; color:var(--gray-dark); }
 .sur-detail { margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:0.67rem; color:var(--text2); line-height:1.8; }
 .note { margin:10px 14px 0; padding:11px 13px; background:#f0fffe; border:1px solid rgba(0,184,169,0.20); border-left:3px solid var(--mint); border-radius:var(--radius-sm); font-size:0.67rem; color:#006b62; line-height:1.7; }
+
+/* ── 인라인 에러 ── */
+#inline-error { display:none; margin:10px 14px 0; padding:11px 13px; background:#fff0f0; border:1px solid rgba(200,0,0,0.20); border-left:3px solid #c00; border-radius:var(--radius-sm); font-size:0.72rem; color:#c00; line-height:1.7; }
 
 /* ── PC 레이아웃 ── */
 @media (min-width:768px) {
@@ -180,6 +181,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   .result-wrap { margin:16px 0 0; }
   .sur-result { margin:10px 0 0; }
   .note { margin:10px 0 16px; }
+  #inline-error { margin:10px 0 0; }
   #search-input { font-size:1rem; }
   .tog-btn { font-size:0.9rem; padding:14px 10px; }
   .step-title { font-size:0.92rem; }
@@ -197,7 +199,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   <div class="header-divider"></div>
   <div class="header-text">
     <h1>수출입 컨테이너 안전운임</h1>
-    <p>2026년 국토교통부 고시 제2026-55호</p>
+    <p id="header-gov-text">데이터 로딩 중...</p>
   </div>
   <div class="vat">VAT 별도</div>
 </div>
@@ -205,10 +207,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 <!-- 배너 -->
 <div class="banner">
   <span class="banner-label">📋 적용 고시:</span>
-  <select class="banner-select">
-    <option selected>2026년 2월 고시</option>
-  </select>
-  <span class="banner-gov">국토교통부 제2026-55호</span>
+  <select class="banner-select" id="notice-select" aria-label="고시 선택"></select>
+  <span class="banner-gov" id="banner-gov"></span>
 </div>
 
 <div class="pc-wrap">
@@ -228,9 +228,9 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
         placeholder="예) 해운대, 반여동, 경주시..."
         autocomplete="off" autocorrect="off"
         autocapitalize="off" spellcheck="false"/>
-      <div id="ac-wrap">
+      <div id="ac-wrap" role="listbox" aria-label="검색 결과">
         <div id="ac-info">검색 결과</div>
-        <div id="ac-list" role="listbox"></div>
+        <div id="ac-list"></div>
       </div>
     </div>
     <p class="hint-text">시·도 / 시·군·구 / 읍·면·동 중 <b>일부만 입력</b>해도 검색돼요<br>예) <b>부산 해운대</b> &nbsp;·&nbsp; <b>반여동</b> &nbsp;·&nbsp; <b>경주</b></p>
@@ -301,10 +301,14 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 </div>
 
 <!-- 로딩 -->
-<div id="loading"><span class="spin"></span>데이터 로딩 중...<div class="load-bar"><div class="load-fill" id="load-fill" style="width:0%"></div></div></div>
+<div id="loading">
+  <span class="spin"></span>데이터 로딩 중...
+  <div class="load-bar"><div class="load-fill" id="load-fill" style="width:0%"></div></div>
+  <div id="load-text"></div>
+</div>
 
 <!-- 인라인 에러 -->
-<div id="inline-error" style="display:none;color:#c00;border-left-color:#c00;" class="note"></div>
+<div id="inline-error"></div>
 
 <!-- 결과 -->
 <div id="result">
@@ -344,53 +348,19 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
     </div>
     <div class="sur-detail" id="sur-detail"></div>
   </div>
-  <div class="note">※ VAT 미포함 &nbsp;|&nbsp; 안전위탁: 운수사업자→화물차주 &nbsp;|&nbsp; 사업자간: 운수사업자→운수사업자 &nbsp;|&nbsp; 안전운송: 화주→운수사업자<br>※ 다중 할증: 최고 100% + 나머지 각 50% (최대 3개 합산)</div>
+  <div class="note" id="result-note">※ VAT 미포함 &nbsp;|&nbsp; 안전위탁: 운수사업자→화물차주 &nbsp;|&nbsp; 사업자간: 운수사업자→운수사업자 &nbsp;|&nbsp; 안전운송: 화주→운수사업자<br>※ 다중 할증: 최고 100% + 나머지 각 50% (최대 3개 합산)</div>
 </div>
 
 </div><!-- /pc-wrap -->
 
-<script src="flat.js?v=20260517b"></script>
-<script src="data0.js?v=20260517b"></script>
-<script src="data1.js?v=20260517b"></script>
-<script src="data2.js?v=20260517b"></script>
-<script src="data3.js?v=20260517b"></script>
-<script src="data4.js?v=20260517b"></script>
-<script src="data5.js?v=20260517b"></script>
-<script src="data6.js?v=20260517b"></script>
-<script src="data7.js?v=20260517b"></script>
-<script src="data8.js?v=20260517b"></script>
-<script src="data9.js?v=20260517b"></script>
+<!-- flat.js만 동기 로드 (검색용 지역 목록 294KB) — 운임 데이터는 고시 선택 시 동적 로드 -->
+<script src="flat.js?v=20260517"></script>
 
 <script>
-(function() {
+(function () {
 'use strict';
 
-// ── 새로고침 시 항상 맨 위로 ──
-window.addEventListener('beforeunload', function() { window.scrollTo(0, 0); });
-
-// ── 데이터 로딩 (synchronous IIFE — data scripts already executed) ──
-const TARIFF = {};
-(function() {
-  for (let i = 0; i < 10; i++) {
-    const chunk = window['TARIFF_CHUNK' + i];
-    if (chunk) {
-      const keys = Object.keys(chunk);
-      for (let j = 0; j < keys.length; j++) TARIFF[keys[j]] = chunk[keys[j]];
-    }
-  }
-  document.getElementById('load-fill').style.width = '100%';
-  document.getElementById('loading').style.display = 'none';
-})();
-
-// ── 단일 상태 객체 ──
-const state = {
-  key: null,       // 선택된 목적지 키
-  label: '',       // 선택된 목적지 이름
-  type: null,      // 운송 유형 (왕복/편도)
-  fareType: null,  // 운임 유형
-  entry: null,
-  portData: null
-};
+window.addEventListener('beforeunload', function () { window.scrollTo(0, 0); });
 
 // ── XSS 방어 ──
 function escapeHtml(str) {
@@ -402,8 +372,165 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
-// ── 헬퍼 ──
+// ── 숫자 포맷 ──
 function fmt(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
+
+// ── 앱 상태 ──
+const state = {
+  key: null,
+  label: '',
+  type: null,
+  fareType: null,
+  entry: null,
+  portData: null
+};
+
+// ── 현재 활성 운임 데이터 및 고시 정보 ──
+let TARIFF = {};
+let activeNotice = null;
+let isLoading = false;
+
+// ────────────────────────────────────────────
+// 고시 데이터 동적 로딩
+// ────────────────────────────────────────────
+
+function loadScript(src) {
+  return new Promise(function (resolve, reject) {
+    const s = document.createElement('script');
+    s.src = src;
+    s.setAttribute('data-tariff-chunk', 'true');
+    s.onload = resolve;
+    s.onerror = function () { reject(new Error('로드 실패: ' + src)); };
+    document.head.appendChild(s);
+  });
+}
+
+function removeOldChunkScripts() {
+  document.querySelectorAll('script[data-tariff-chunk]').forEach(function (s) { s.remove(); });
+}
+
+function clearChunkVars(count) {
+  for (let i = 0; i < count; i++) { delete window['TARIFF_CHUNK' + i]; }
+}
+
+function loadNoticeData(notice) {
+  if (isLoading) return Promise.resolve();
+  if (activeNotice && activeNotice.id === notice.id) return Promise.resolve();
+
+  isLoading = true;
+  showLoading(notice.label);
+  resetAll();
+
+  removeOldChunkScripts();
+  clearChunkVars(20);
+
+  const chunks = notice.chunks || 10;
+  const ver = notice.id.replace(/-/g, '');
+  let loaded = 0;
+
+  const promises = [];
+  for (let i = 0; i < chunks; i++) {
+    const src = 'data/' + notice.id + '/data' + i + '.js?v=' + ver;
+    promises.push(
+      loadScript(src).then(function () {
+        loaded++;
+        updateLoadProgress(loaded, chunks, notice.label);
+      })
+    );
+  }
+
+  return Promise.all(promises)
+    .then(function () {
+      TARIFF = {};
+      for (let i = 0; i < chunks; i++) {
+        const chunk = window['TARIFF_CHUNK' + i];
+        if (chunk) Object.assign(TARIFF, chunk);
+      }
+      activeNotice = notice;
+      updateNoticeUI(notice);
+      hideLoading();
+      isLoading = false;
+    })
+    .catch(function (err) {
+      hideLoading();
+      isLoading = false;
+      showInlineError('데이터를 불러오지 못했습니다. 네트워크 상태를 확인하고 페이지를 새로고침 해주세요.');
+    });
+}
+
+function updateNoticeUI(notice) {
+  document.getElementById('header-gov-text').textContent =
+    notice.year + '년 국토교통부 고시 ' + notice.gov;
+  document.getElementById('banner-gov').textContent = notice.gov;
+}
+
+function showLoading(label) {
+  const el = document.getElementById('loading');
+  el.style.display = 'block';
+  el.querySelector('.spin').style.display = 'inline-block';
+  document.getElementById('load-fill').style.width = '0%';
+  document.getElementById('load-text').textContent = '';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('sur-result').classList.remove('show');
+  hideInlineError();
+  document.getElementById('search-input').disabled = true;
+}
+
+function hideLoading() {
+  document.getElementById('load-fill').style.width = '100%';
+  setTimeout(function () {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('search-input').disabled = false;
+    document.getElementById('search-input').focus();
+  }, 300);
+}
+
+function updateLoadProgress(loaded, total, label) {
+  const pct = Math.round((loaded / total) * 100);
+  document.getElementById('load-fill').style.width = pct + '%';
+  document.getElementById('load-text').textContent =
+    label + ' (' + loaded + '/' + total + ')';
+}
+
+// ── notices.json 로드 및 초기화 ──
+function initNotices() {
+  fetch('notices.json', { cache: 'no-cache' })
+    .then(function (r) {
+      if (!r.ok) throw new Error('notices.json ' + r.status);
+      return r.json();
+    })
+    .then(function (config) {
+      const notices = config.notices || [];
+      if (!notices.length) throw new Error('고시 목록이 비어 있습니다.');
+
+      const defaultId = config.default || notices[0].id;
+      const select = document.getElementById('notice-select');
+
+      notices.forEach(function (n) {
+        const opt = document.createElement('option');
+        opt.value = n.id;
+        opt.textContent = n.label;
+        if (n.id === defaultId) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      select.addEventListener('change', function () {
+        const chosen = notices.find(function (n) { return n.id === select.value; });
+        if (chosen) loadNoticeData(chosen);
+      });
+
+      const defaultNotice = notices.find(function (n) { return n.id === defaultId; }) || notices[0];
+      return loadNoticeData(defaultNotice);
+    })
+    .catch(function (err) {
+      document.getElementById('loading').style.display = 'none';
+      showInlineError('고시 목록을 불러오지 못했습니다. (' + err.message + ')');
+    });
+}
+
+// ────────────────────────────────────────────
+// UI 헬퍼
+// ────────────────────────────────────────────
 
 function setDone(numId, valId, txt) {
   const el = document.getElementById(numId);
@@ -419,8 +546,21 @@ function clearDone(numId, valId, numTxt) {
   document.getElementById(valId).textContent = '';
 }
 
+function showInlineError(msg) {
+  const el = document.getElementById('inline-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function hideInlineError() {
+  const el = document.getElementById('inline-error');
+  el.textContent = '';
+  el.style.display = 'none';
+}
+
+// 할증만 초기화 (state 건드리지 않음)
 function clearSurcharges() {
-  document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').forEach(function(el) {
+  document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').forEach(function (el) {
     el.classList.remove('checked', 'checked-warn');
   });
   document.getElementById('weight-wrap').classList.remove('show');
@@ -430,20 +570,44 @@ function clearSurcharges() {
   document.getElementById('sur-result').classList.remove('show');
 }
 
-function showInlineError(msg) {
-  const el = document.getElementById('inline-error');
-  el.textContent = msg;
-  el.style.display = 'block';
+// 고시 전환 시 전체 상태 초기화
+function resetAll() {
+  state.key = null;
+  state.label = '';
+  state.type = null;
+  state.fareType = null;
+  state.entry = null;
+  state.portData = null;
+
+  const inp = document.getElementById('search-input');
+  inp.value = '';
+  hideAC();
+
+  clearDone('sn1', 'sv1', '1');
+  clearDone('sn2', 'sv2', '2');
+  clearDone('sn3', 'sv3', '3');
+
+  document.getElementById('btn-왕복').classList.remove('active');
+  document.getElementById('btn-편도').classList.remove('active');
+
+  ['위탁', '사업자', '운송'].forEach(function (k) {
+    document.getElementById('ft-' + k).classList.remove('active');
+  });
+  document.getElementById('ftdesc').style.display = 'none';
+  document.getElementById('ftdesc').innerHTML = '';
+
+  clearSurcharges();
+
+  document.getElementById('result').style.display = 'none';
+  hideInlineError();
 }
 
-function hideInlineError() {
-  const el = document.getElementById('inline-error');
-  el.style.display = 'none';
-  el.textContent = '';
-}
+// ────────────────────────────────────────────
+// 자동완성
+// ────────────────────────────────────────────
 
-// ── 자동완성 ──
 let acResults = [];
+let kbIndex = -1;
 const inp = document.getElementById('search-input');
 const acWrap = document.getElementById('ac-wrap');
 const acList = document.getElementById('ac-list');
@@ -453,57 +617,59 @@ function showAC() { acWrap.style.display = 'block'; inp.classList.add('ac-open')
 function hideAC() { acWrap.style.display = 'none'; inp.classList.remove('ac-open'); }
 
 let _debounceTimer = null;
-inp.addEventListener('input', function() {
+inp.addEventListener('input', function () {
   clearTimeout(_debounceTimer);
-  _debounceTimer = setTimeout(function() {
+  _debounceTimer = setTimeout(function () {
     const q = inp.value.trim();
     if (!q) { hideAC(); return; }
-    const tokens = q.split(/\s+/).filter(function(t){ return t; });
+    const tokens = q.split(/\s+/).filter(Boolean);
     const flat = window.FLAT || [];
-    acResults = flat.filter(function(item) {
-      return tokens.every(function(t){ return item.l.indexOf(t) >= 0; });
+    acResults = flat.filter(function (item) {
+      return tokens.every(function (t) { return item.l.indexOf(t) >= 0; });
     }).slice(0, 30);
     if (!acResults.length) { hideAC(); return; }
     acInfo.textContent = '검색 결과 ' + acResults.length + '건';
-    acList.innerHTML = acResults.map(function(item, i) {
+    acList.innerHTML = acResults.map(function (item, i) {
       let label = escapeHtml(item.l);
-      tokens.forEach(function(t) {
-        const safeT = escapeHtml(t);
-        label = label.split(safeT).join('<span class="ac-match">' + safeT + '</span>');
+      tokens.forEach(function (t) {
+        const st = escapeHtml(t);
+        label = label.split(st).join('<span class="ac-match">' + st + '</span>');
       });
-      return '<div class="ac-item" role="option" data-i="' + i + '"><span class="ac-icon">📍</span><span>' + label + '</span></div>';
+      return '<div class="ac-item" role="option" aria-selected="false" data-i="' + i + '"><span class="ac-icon" aria-hidden="true">📍</span><span>' + label + '</span></div>';
     }).join('');
     showAC();
     kbIndex = -1;
   }, 150);
 });
 
-// 터치 스크롤/선택 구분
 let _sy = 0, _sm = false;
-acList.addEventListener('touchstart', function(e) { _sy = e.touches[0].clientY; _sm = false; }, { passive: true });
-acList.addEventListener('touchmove', function(e) { if (Math.abs(e.touches[0].clientY - _sy) > 8) _sm = true; }, { passive: true });
-acList.addEventListener('touchend', function(e) {
+acList.addEventListener('touchstart', function (e) { _sy = e.touches[0].clientY; _sm = false; }, { passive: true });
+acList.addEventListener('touchmove', function (e) { if (Math.abs(e.touches[0].clientY - _sy) > 8) _sm = true; }, { passive: true });
+acList.addEventListener('touchend', function (e) {
   if (_sm) { _sm = false; return; }
   const item = e.target.closest('.ac-item');
   if (item) { e.preventDefault(); selectItem(parseInt(item.getAttribute('data-i'), 10)); }
 }, { passive: false });
-acList.addEventListener('mousedown', function(e) {
+acList.addEventListener('mousedown', function (e) {
   const item = e.target.closest('.ac-item');
   if (item) { e.preventDefault(); selectItem(parseInt(item.getAttribute('data-i'), 10)); }
 });
 
-// 키보드 방향키
-let kbIndex = -1;
 function setKbFocus(idx) {
   const items = acList.querySelectorAll('.ac-item');
-  items.forEach(function(el) { el.classList.remove('keyboard-focus'); });
+  items.forEach(function (el) {
+    el.classList.remove('keyboard-focus');
+    el.setAttribute('aria-selected', 'false');
+  });
   kbIndex = idx;
   if (idx >= 0 && idx < items.length) {
     items[idx].classList.add('keyboard-focus');
+    items[idx].setAttribute('aria-selected', 'true');
     items[idx].scrollIntoView({ block: 'nearest' });
   }
 }
-inp.addEventListener('keydown', function(e) {
+
+inp.addEventListener('keydown', function (e) {
   const items = acList.querySelectorAll('.ac-item');
   if (e.key === 'ArrowDown') {
     e.preventDefault();
@@ -522,34 +688,32 @@ inp.addEventListener('keydown', function(e) {
   }
 });
 
-// 외부 클릭 시 닫기
-document.addEventListener('touchstart', function(e) {
+document.addEventListener('touchstart', function (e) {
   if (!e.target.closest('#step1')) hideAC();
 }, { passive: true });
-document.addEventListener('mousedown', function(e) {
+document.addEventListener('mousedown', function (e) {
   if (!e.target.closest('#step1')) hideAC();
 });
 
 function selectItem(i) {
   const item = acResults[i];
   if (!item) return;
-  inp.value = item.l;
-  state.label = item.l;
-  hideAC();
-  inp.blur();
 
-  // 목적지가 변경됐으면 할증 전체 초기화
-  if (state.key && state.key !== item.k) {
-    clearSurcharges();
-  }
+  if (state.key && state.key !== item.k) clearSurcharges();
 
   state.key = item.k;
+  state.label = item.l;
+  inp.value = item.l;
+  hideAC();
+  inp.blur();
   setDone('sn1', 'sv1', item.l.split(' ').slice(-2).join(' '));
-  // 3가지 모두 선택됐으면 결과 표시
   tryShowResult();
 }
 
-// ── 운송 유형 (같은 버튼 다시 누르면 해제) ──
+// ────────────────────────────────────────────
+// 운송 유형
+// ────────────────────────────────────────────
+
 function setType(t) {
   if (state.type === t) {
     state.type = null;
@@ -567,19 +731,23 @@ function setType(t) {
   tryShowResult();
 }
 
-// ── 운임 유형 (같은 버튼 다시 누르면 해제) ──
+// ────────────────────────────────────────────
+// 운임 유형
+// ────────────────────────────────────────────
+
 const fareDesc = {
   '위탁': '<b style="color:#1a1a1a;font-weight:700">안전위탁운임</b> — 운수사업자가 화물차주에게 지급하는 운임',
   '사업자': '<b style="color:#1a1a1a;font-weight:700">운수사업자간 운임</b> — 운수사업자가 다른 운송사업자에게 위탁 시 지급하는 운임',
   '운송': '<b style="color:#1a1a1a;font-weight:700">안전운송운임</b> — 화주가 운수사업자 또는 화물차주에게 지급하는 운임'
 };
+
 function setFareType(t) {
+  const ftdesc = document.getElementById('ftdesc');
   if (state.fareType === t) {
     state.fareType = null;
-    ['위탁','사업자','운송'].forEach(function(k) {
-      document.getElementById('ft-'+k).classList.remove('active');
+    ['위탁', '사업자', '운송'].forEach(function (k) {
+      document.getElementById('ft-' + k).classList.remove('active');
     });
-    const ftdesc = document.getElementById('ftdesc');
     ftdesc.style.display = 'none';
     ftdesc.innerHTML = '';
     clearDone('sn3', 'sv3', '3');
@@ -588,45 +756,103 @@ function setFareType(t) {
     return;
   }
   state.fareType = t;
-  ['위탁','사업자','운송'].forEach(function(k) {
-    document.getElementById('ft-'+k).classList.toggle('active', k === t);
+  ['위탁', '사업자', '운송'].forEach(function (k) {
+    document.getElementById('ft-' + k).classList.toggle('active', k === t);
   });
-  const ftdesc = document.getElementById('ftdesc');
   ftdesc.innerHTML = fareDesc[t];
   ftdesc.style.display = 'block';
-  setDone('sn3', 'sv3', t === '위탁' ? '안전위탁' : t === '사업자' ? '사업자간' : '안전운송');
+  setDone('sn3', 'sv3', { '위탁': '안전위탁', '사업자': '사업자간', '운송': '안전운송' }[t]);
   applyFareHighlight();
   calcSur();
   tryShowResult();
 }
 
-// ── 3가지 모두 선택됐을 때만 결과 표시 ──
+// ────────────────────────────────────────────
+// 결과 표시
+// ────────────────────────────────────────────
+
 function tryShowResult() {
-  if (state.key && state.type && state.fareType) {
-    showResult();
-  } else {
-    document.getElementById('result').style.display = 'none';
-  }
+  if (state.key && state.type && state.fareType) showResult();
+  else document.getElementById('result').style.display = 'none';
 }
 
-// ── 운임 강조 ──
 function applyFareHighlight() {
   if (!state.fareType) return;
-  const idx = {'위탁':0,'사업자':1,'운송':2}[state.fareType];
-  ['f40','f20'].forEach(function(ft) {
-    ['위탁','사업자','운송'].forEach(function(k, i) {
-      const row = document.getElementById('row-'+ft+'-'+k);
-      row.classList.remove('selected-type','dimmed');
+  const idx = { '위탁': 0, '사업자': 1, '운송': 2 }[state.fareType];
+  ['f40', 'f20'].forEach(function (ft) {
+    ['위탁', '사업자', '운송'].forEach(function (k, i) {
+      const row = document.getElementById('row-' + ft + '-' + k);
+      row.classList.remove('selected-type', 'dimmed');
       row.classList.add(i === idx ? 'selected-type' : 'dimmed');
     });
   });
 }
 
-// ── 할증 ──
-function doScroll(targetEl) {
-  if (!targetEl) return;
-  targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function showResult() {
+  if (!activeNotice) return;
+  const entry = TARIFF[state.key];
+  if (!entry) {
+    showInlineError('해당 지역의 데이터를 찾을 수 없습니다. 다른 지역을 검색해 주세요.');
+    document.getElementById('result').style.display = 'none';
+    return;
+  }
+  hideInlineError();
+  state.entry = entry;
+
+  const filterFn = state.type === '왕복'
+    ? function (k) { return k.indexOf('편도') < 0; }
+    : function (k) { return k.indexOf('편도') >= 0; };
+  const ports = Object.keys(entry).filter(filterFn);
+
+  if (!ports.length) {
+    showInlineError('편도 운임은 수도권 화주공장에서 의왕ICD 반납·수령 시만 적용됩니다.');
+    document.getElementById('result').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('r-loc').textContent = state.label;
+  document.getElementById('r-sub').textContent =
+    state.type + ' · ' + activeNotice.year + '년 안전운임 (VAT 별도)';
+
+  const tabsEl = document.getElementById('port-tabs');
+  tabsEl.innerHTML = '';
+  ports.forEach(function (p, i) {
+    const tab = document.createElement('button');
+    tab.className = 'ptab' + (i === 0 ? ' active' : '');
+    tab.setAttribute('data-port', p);
+    tab.textContent = p.replace('(편도)', '');
+    tab.addEventListener('click', function () { selectPort(p); });
+    tabsEl.appendChild(tab);
+  });
+
+  selectPort(ports[0]);
+  document.getElementById('result').style.display = 'block';
+  setTimeout(function () {
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
 }
+
+function selectPort(portName) {
+  document.querySelectorAll('.ptab').forEach(function (t) {
+    t.classList.toggle('active', t.getAttribute('data-port') === portName);
+  });
+  const d = state.entry ? state.entry[portName] : null;
+  if (!d) return;
+  state.portData = d;
+  document.getElementById('dist-km').textContent = d.dist + ' km';
+  ['위탁', '사업자', '운송'].forEach(function (k, i) {
+    document.getElementById('f40-' + k).textContent = fmt(d.f40[i]);
+    document.getElementById('f20-' + k).textContent = fmt(d.f20[i]);
+  });
+  applyFareHighlight();
+  calcSur();
+}
+
+// ────────────────────────────────────────────
+// 할증 계산
+// ────────────────────────────────────────────
+
+function doScroll(el) { if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
 function toggleSur(el) {
   const isWeight = el.getAttribute('data-key') === '중량';
@@ -639,185 +865,124 @@ function toggleSur(el) {
   if (isWeight) document.getElementById('weight-wrap').classList.toggle('show', !was);
 
   const remaining = document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').length;
-
   calcSur();
 
-  if (!was) {
-    doScroll(document.getElementById('sur-result'));
-  } else if (was && remaining > 0) {
-    doScroll(document.getElementById('sur-result'));
-  } else if (was && remaining === 0 && surWasShowing) {
-    doScroll(document.querySelector('.result-wrap'));
-  }
+  if (!was || remaining > 0) doScroll(document.getElementById('sur-result'));
+  else if (surWasShowing) doScroll(document.querySelector('.result-wrap'));
 }
 
 function getSurRates() {
   const rates = [];
-  document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').forEach(function(el) {
+  document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').forEach(function (el) {
     const key = el.getAttribute('data-key');
     if (key === '중량') {
       const w40 = parseFloat(document.getElementById('w40').value) || 0;
       const w20 = parseFloat(document.getElementById('w20').value) || 0;
-      if (w40 > 0) rates.push({label:'중량초과40FT('+w40+'톤)', rate:w40*10, ft:'40'});
-      if (w20 > 0) rates.push({label:'중량초과20FT('+w20+'톤)', rate:w20*10, ft:'20'});
+      if (w40 > 0) rates.push({ label: '중량초과40FT(' + w40 + '톤)', rate: w40 * 10, ft: '40' });
+      if (w20 > 0) rates.push({ label: '중량초과20FT(' + w20 + '톤)', rate: w20 * 10, ft: '20' });
     } else {
-      rates.push({label:el.querySelector('.sur-name').textContent.trim(), rate:parseFloat(el.getAttribute('data-rate'))});
+      rates.push({ label: el.querySelector('.sur-name').textContent.trim(), rate: parseFloat(el.getAttribute('data-rate')) });
     }
   });
   return rates;
 }
 
 function calcMulti(arr) {
-  const sorted = [...arr].sort(function(a, b){ return b - a; });
-  if (!sorted.length) return 0;
-  return sorted.slice(0, 3).reduce(function(acc, val, idx) {
-    return acc + (idx === 0 ? val : val * 0.5);
-  }, 0);
+  const s = arr.slice().sort(function (a, b) { return b - a; });
+  if (!s.length) return 0;
+  return s.slice(0, 3).reduce(function (acc, val, i) { return acc + (i === 0 ? val : val * 0.5); }, 0);
 }
 
 function calcSur() {
   const rates = getSurRates();
   const checked = document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').length;
-  if (checked > 0) {
-    setDone('sn4', 'sv4', checked + '개 적용');
-  } else {
-    clearDone('sn4', 'sv4', '4');
-  }
+
+  if (checked > 0) setDone('sn4', 'sv4', checked + '개 적용');
+  else clearDone('sn4', 'sv4', '4');
+
   const surEl = document.getElementById('sur-result');
-  if (!state.portData || rates.length === 0) {
-    surEl.classList.remove('show');
-    return;
-  }
-  if (!state.fareType) return;
-  const idx = {'위탁':0,'사업자':1,'운송':2}[state.fareType];
-  const common = rates.filter(function(r){ return !r.ft; }).map(function(r){ return r.rate; });
-  const rate40 = calcMulti(common.concat(rates.filter(function(r){ return r.ft === '40'; }).map(function(r){ return r.rate; })));
-  const rate20 = calcMulti(common.concat(rates.filter(function(r){ return r.ft === '20'; }).map(function(r){ return r.rate; })));
+  if (!state.portData || !rates.length || !state.fareType) { surEl.classList.remove('show'); return; }
+
+  const idx = { '위탁': 0, '사업자': 1, '운송': 2 }[state.fareType];
+  const common = rates.filter(function (r) { return !r.ft; }).map(function (r) { return r.rate; });
+  const rate40 = calcMulti(common.concat(rates.filter(function (r) { return r.ft === '40'; }).map(function (r) { return r.rate; })));
+  const rate20 = calcMulti(common.concat(rates.filter(function (r) { return r.ft === '20'; }).map(function (r) { return r.rate; })));
   const final40 = Math.round(state.portData.f40[idx] * (1 + rate40 / 100) / 10) * 10;
   const final20 = Math.round(state.portData.f20[idx] * (1 + rate20 / 100) / 10) * 10;
-  const lbl = {'위탁':'안전위탁','사업자':'사업자간','운송':'안전운송'}[state.fareType];
+  const lbl = { '위탁': '안전위탁', '사업자': '사업자간', '운송': '안전운송' }[state.fareType];
+
   document.getElementById('sr-label-40').textContent = '40FT ' + lbl + ' (최종)';
   document.getElementById('sr-label-20').textContent = '20FT ' + lbl + ' (최종)';
   document.getElementById('sr-f40').textContent = fmt(final40);
   document.getElementById('sr-f20').textContent = fmt(final20);
-  document.getElementById('sur-detail').textContent = '적용: ' + rates.map(function(r){ return r.label; }).join(', ') + ' / 40FT ' + rate40.toFixed(1) + '% · 20FT ' + rate20.toFixed(1) + '%';
+  document.getElementById('sur-detail').textContent =
+    '적용: ' + rates.map(function (r) { return r.label; }).join(', ') +
+    ' / 40FT ' + rate40.toFixed(1) + '% · 20FT ' + rate20.toFixed(1) + '%';
   surEl.classList.add('show');
 }
 
-// ── 결과 표시 ──
-function showResult() {
-  const entry = TARIFF[state.key];
-  if (!entry) {
-    showInlineError('데이터를 찾을 수 없습니다.');
-    return;
-  }
-  hideInlineError();
-  state.entry = entry;
-  const ports = state.type === '왕복'
-    ? Object.keys(entry).filter(function(k){ return k.indexOf('편도') < 0; })
-    : Object.keys(entry).filter(function(k){ return k.indexOf('편도') >= 0; });
-  if (!ports.length) {
-    showInlineError('편도 운임은 수도권 화주공장에서 의왕ICD 반납·수령 시만 적용됩니다.');
-    return;
-  }
-  hideInlineError();
-  document.getElementById('r-loc').textContent = state.label;
-  document.getElementById('r-sub').textContent = state.type + ' · 2026년 안전운임 (VAT 별도)';
-  const tabsEl = document.getElementById('port-tabs');
-  tabsEl.innerHTML = '';
-  ports.forEach(function(p, i) {
-    const tab = document.createElement('button');
-    tab.className = 'ptab' + (i === 0 ? ' active' : '');
-    tab.setAttribute('data-port', p);
-    tab.textContent = p.replace('(편도)', '');
-    tab.addEventListener('click', function() { selectPort(p); });
-    tabsEl.appendChild(tab);
-  });
-  selectPort(ports[0]);
-  document.getElementById('result').style.display = 'block';
-  setTimeout(function() {
-    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 150);
-}
+// ────────────────────────────────────────────
+// 단계 초기화
+// ────────────────────────────────────────────
 
-function selectPort(portName) {
-  document.querySelectorAll('.ptab').forEach(function(t) {
-    t.classList.toggle('active', t.getAttribute('data-port') === portName);
-  });
-  const d = state.entry[portName];
-  if (!d) return;
-  state.portData = d;
-  document.getElementById('dist-km').textContent = d.dist + ' km';
-  ['위탁','사업자','운송'].forEach(function(k, i) {
-    document.getElementById('f40-'+k).textContent = fmt(d.f40[i]);
-    document.getElementById('f20-'+k).textContent = fmt(d.f20[i]);
-  });
-  applyFareHighlight();
-  calcSur();
-}
-
-// ── 항목 초기화 ──
 function resetStep(step) {
   const el = document.getElementById('sn' + step);
   if (!el.classList.contains('done')) return;
 
+  if (step === 4) {
+    const surWasShowing = document.getElementById('sur-result').classList.contains('show');
+    clearSurcharges();
+    if (surWasShowing) doScroll(document.querySelector('.result-wrap'));
+    return;
+  }
+
   if (step === 1) {
-    state.key = null;
-    state.label = '';
-    document.getElementById('search-input').value = '';
-    clearDone('sn1', 'sv1', '1');
+    state.key = null; state.label = '';
+    inp.value = '';
   } else if (step === 2) {
     state.type = null;
     document.getElementById('btn-왕복').classList.remove('active');
     document.getElementById('btn-편도').classList.remove('active');
-    clearDone('sn2', 'sv2', '2');
   } else if (step === 3) {
     state.fareType = null;
-    ['위탁','사업자','운송'].forEach(function(k) {
-      document.getElementById('ft-'+k).classList.remove('active');
+    ['위탁', '사업자', '운송'].forEach(function (k) {
+      document.getElementById('ft-' + k).classList.remove('active');
     });
     document.getElementById('ftdesc').style.display = 'none';
     document.getElementById('ftdesc').innerHTML = '';
-    clearDone('sn3', 'sv3', '3');
-  } else if (step === 4) {
-    const surWasShowing4 = document.getElementById('sur-result').classList.contains('show');
-    clearSurcharges();
-    if (surWasShowing4) {
-      doScroll(document.querySelector('.result-wrap'));
-    }
-    return; // early return — step 4 doesn't hide the main result
   }
 
-  // Steps 1–3: shared cleanup
+  clearDone('sn' + step, 'sv' + step, String(step));
   document.getElementById('result').style.display = 'none';
   document.getElementById('sur-result').classList.remove('show');
 }
 
-// ── 이벤트 바인딩 ──
+// ────────────────────────────────────────────
+// 이벤트 바인딩
+// ────────────────────────────────────────────
 
-// Step numbers
-document.getElementById('sn1').addEventListener('click', function() { resetStep(1); });
-document.getElementById('sn2').addEventListener('click', function() { resetStep(2); });
-document.getElementById('sn3').addEventListener('click', function() { resetStep(3); });
-document.getElementById('sn4').addEventListener('click', function() { resetStep(4); });
-
-// Transport type buttons
-document.getElementById('btn-왕복').addEventListener('click', function() { setType('왕복'); });
-document.getElementById('btn-편도').addEventListener('click', function() { setType('편도'); });
-
-// Fare type buttons
-['위탁','사업자','운송'].forEach(function(k) {
-  document.getElementById('ft-'+k).addEventListener('click', function() { setFareType(k); });
+[1, 2, 3, 4].forEach(function (s) {
+  document.getElementById('sn' + s).addEventListener('click', function () { resetStep(s); });
 });
 
-// Surcharge items
-document.querySelectorAll('.sur-item').forEach(function(el) {
-  el.addEventListener('click', function() { toggleSur(el); });
+document.getElementById('btn-왕복').addEventListener('click', function () { setType('왕복'); });
+document.getElementById('btn-편도').addEventListener('click', function () { setType('편도'); });
+
+['위탁', '사업자', '운송'].forEach(function (k) {
+  document.getElementById('ft-' + k).addEventListener('click', function () { setFareType(k); });
 });
 
-// Weight inputs
+document.querySelectorAll('.sur-item').forEach(function (el) {
+  el.addEventListener('click', function () { toggleSur(el); });
+});
+
 document.getElementById('w40').addEventListener('input', calcSur);
 document.getElementById('w20').addEventListener('input', calcSur);
+
+// ────────────────────────────────────────────
+// 시작
+// ────────────────────────────────────────────
+initNotices();
 
 })();
 </script>
