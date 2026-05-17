@@ -128,7 +128,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 
 /* ── 결과 ── */
 #result { display:none; }
-.result-wrap { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+.result-wrap { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); scroll-margin-top:80px; }
 .result-top { padding:14px 16px; background:var(--gray-dark); border-bottom:3px solid var(--mint); }
 .result-loc { font-size:1rem; font-weight:700; color:#fff; }
 .result-sub { font-size:0.68rem; color:rgba(255,255,255,0.6); margin-top:3px; }
@@ -156,7 +156,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .fare-row.dimmed { opacity:0.3; }
 
 /* ── 할증 최종운임 ── */
-.sur-result { margin:10px 14px 0; background:linear-gradient(135deg,#f8f8f8,#f0f0f0); border:1.5px solid var(--gray); border-top:3px solid var(--mint); border-radius:var(--radius-sm); padding:14px 16px; display:none; box-shadow:var(--shadow); }
+.sur-result { margin:10px 14px 0; background:linear-gradient(135deg,#f8f8f8,#f0f0f0); border:1.5px solid var(--gray); border-top:3px solid var(--mint); border-radius:var(--radius-sm); padding:14px 16px; display:none; box-shadow:var(--shadow); scroll-margin-top:80px; }
 .sur-result.show { display:block; }
 .sur-result-title { font-size:0.78rem; color:var(--gray-dark); font-weight:800; margin-bottom:10px; }
 .sur-final-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -564,9 +564,7 @@ function applyFareHighlight() {
 // ── 할증 ──
 function doScroll(targetEl) {
   if (!targetEl) return;
-  var rect = targetEl.getBoundingClientRect();
-  var y = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 80;
-  window.scrollTo({ top: y, behavior: 'smooth' });
+  targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function toggleSur(el) {
