@@ -566,38 +566,42 @@ function toggleSur(el) {
   var isWeight = el.getAttribute('data-key') === '중량';
   var warn = el.getAttribute('data-warn') === '1';
   var was = el.classList.contains('checked') || el.classList.contains('checked-warn');
+
+  // 해제인 경우 - calcSur 전에 sur-result 상태 먼저 저장
+  var surWasShowing = document.getElementById('sur-result').classList.contains('show');
+
   el.classList.remove('checked','checked-warn');
   if (!was) el.classList.add(warn ? 'checked-warn' : 'checked');
   if (isWeight) document.getElementById('weight-wrap').classList.toggle('show', !was);
 
-  // 해제 후 남은 할증 개수
-  var remaining = document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').length;
-  // sur-result 현재 보이는지 (calcSur 호출 전에 체크)
-  var surEl = document.getElementById('sur-result');
-  var surWasShowing = surEl.classList.contains('show');
-
   calcSur();
 
-  // 할증 해제 + 전부 해제됨 + 이전에 할증결과 보이고 있었음 → 기본 운임으로 스크롤
-  if (was && remaining === 0 && surWasShowing) {
-    setTimeout(function() {
-      var resultEl = document.getElementById('result');
-      if (resultEl && resultEl.style.display !== 'none') {
-        var top = resultEl.getBoundingClientRect().top + window.pageYOffset - 80;
-        window.scrollTo({ top: top, behavior: 'smooth' });
-      }
-    }, 200);
+  // 할증 선택 → sur-result로 스크롤
+  if (!was) {
+    var surEl = document.getElementById('sur-result');
+    if (surEl.classList.contains('show')) {
+      setTimeout(function() {
+        window.scrollTo({
+          top: surEl.offsetTop - 80,
+          behavior: 'smooth'
+        });
+      }, 200);
+    }
+    return;
   }
 
-  // 할증 선택 시 → 할증 결과로 스크롤 (calcSur에서 show 추가된 후)
-  if (!was) {
-    setTimeout(function() {
-      var surResult = document.getElementById('sur-result');
-      if (surResult && surResult.classList.contains('show')) {
-        var top = surResult.getBoundingClientRect().top + window.pageYOffset - 80;
-        window.scrollTo({ top: top, behavior: 'smooth' });
-      }
-    }, 200);
+  // 할증 해제 → 남은 할증 없고 이전에 sur-result 보이고 있었으면 result-wrap으로 스크롤
+  var remaining = document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').length;
+  if (remaining === 0 && surWasShowing) {
+    var resultWrap = document.querySelector('.result-wrap');
+    if (resultWrap) {
+      setTimeout(function() {
+        window.scrollTo({
+          top: resultWrap.offsetTop - 80,
+          behavior: 'smooth'
+        });
+      }, 200);
+    }
   }
 }
 function getSurRates() {
