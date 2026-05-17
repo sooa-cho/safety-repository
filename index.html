@@ -476,6 +476,21 @@ function selectItem(i) {
   currentLabel = item.l;
   hideAC();
   inp.blur();
+
+  // 목적지가 변경됐으면 할증 전체 초기화
+  if (currentKey && currentKey !== item.k) {
+    document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').forEach(function(el) {
+      el.classList.remove('checked','checked-warn');
+    });
+    document.getElementById('weight-wrap').classList.remove('show');
+    document.getElementById('w40').value = '';
+    document.getElementById('w20').value = '';
+    var sn4 = document.getElementById('sn4');
+    sn4.classList.remove('done'); sn4.textContent = '4';
+    document.getElementById('sv4').textContent = '';
+    document.getElementById('sur-result').classList.remove('show');
+  }
+
   currentKey = item.k;
   setDone('sn1', 'sv1', item.l.split(' ').slice(-2).join(' '));
   // 3가지 모두 선택됐으면 결과 표시
