@@ -920,8 +920,8 @@ function calcSur() {
   const common = rates.filter(function (r) { return !r.ft; }).map(function (r) { return r.rate; });
   const rate40 = calcMulti(common.concat(rates.filter(function (r) { return r.ft === '40'; }).map(function (r) { return r.rate; })));
   const rate20 = calcMulti(common.concat(rates.filter(function (r) { return r.ft === '20'; }).map(function (r) { return r.rate; })));
-  const final40 = Math.round(state.portData.f40[idx] * (1 + rate40 / 100) / 10) * 10;
-  const final20 = Math.round(state.portData.f20[idx] * (1 + rate20 / 100) / 10) * 10;
+  const final40 = Math.round(state.portData.f40[idx] * (1 + rate40 / 100) / 100) * 100;
+  const final20 = Math.round(state.portData.f20[idx] * (1 + rate20 / 100) / 100) * 100;
   const lbl = { '위탁': '안전위탁', '사업자': '사업자간', '운송': '안전운송' }[state.fareType];
 
   document.getElementById('sr-label-40').textContent = '40FT ' + lbl + ' (최종)';
