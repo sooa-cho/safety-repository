@@ -220,6 +220,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 #rt-panel-base .rt-panel-head { background:var(--gray-dark); border-left:4px solid var(--mint); }
 #rt-panel-icn  .rt-panel-head { background:#1a5a8a; border-left:4px solid #4db8ff; }
 #rt-panel-ptk  .rt-panel-head { background:#7a4500; border-left:4px solid #ffa040; }
+.rt-panel-title-wrap { display:flex; flex-direction:column; gap:2px; }
+.rt-panel-sub { font-size:0.62rem; font-weight:400; opacity:0.80; }
 
 /* ══════════════════════════════════════════
    PC 레이아웃 (900px+) — 완전 재설계
@@ -576,7 +578,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
       <!-- 콘솔 박스 2: 인천지역 -->
       <div class="rt-panel open" id="rt-panel-icn">
         <div class="rt-panel-head" data-panel="rt-panel-icn">
-          <span>거리(KM)별 운임 — 인천지역 (왕복)</span>
+          <div class="rt-panel-title-wrap">
+            <span>거리(KM)별 운임 — 인천지역 (왕복)</span>
+            <span class="rt-panel-sub" id="icn-panel-sub">인천신항·인천항·인천여객터미널 기점 (+20%)</span>
+          </div>
           <span class="rt-panel-arrow">▲</span>
         </div>
         <div class="rt-panel-body">
@@ -590,7 +595,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
       <!-- 콘솔 박스 3: 평택지역 -->
       <div class="rt-panel open" id="rt-panel-ptk">
         <div class="rt-panel-head" data-panel="rt-panel-ptk">
-          <span>거리(KM)별 운임 — 평택지역 (왕복)</span>
+          <div class="rt-panel-title-wrap">
+            <span>거리(KM)별 운임 — 평택지역 (왕복)</span>
+            <span class="rt-panel-sub" id="ptk-panel-sub">평택항 기점 (+18%)</span>
+          </div>
           <span class="rt-panel-arrow">▲</span>
         </div>
         <div class="rt-panel-body">
@@ -1285,6 +1293,11 @@ var modalFareIdx = 0; // 0=위탁, 1=사업자, 2=운송
 // 인천·평택 지역 항구 (기본 요율 수집에서 제외)
 var REGIONAL_PORTS = ['인천신항', '인천항', '인천국제여객터미널', '평택항'];
 
+// 고시 제2026-55호 별표: 1km 기준 운임 (TARIFF 데이터에 없으므로 직접 삽입)
+// f40: [안전위탁, 사업자간, 안전운송], f20: [안전위탁, 사업자간, 안전운송]
+var OFFICIAL_1KM_F40 = [125300, 135500, 146500];
+var OFFICIAL_1KM_F20 = [108500, 117600, 127400];
+
 function surRound(base, pct) {
   return Math.round(base * (1 + pct / 100) / 100) * 100;
 }
@@ -1302,6 +1315,10 @@ function buildBaseDistMap() {
       map[d.dist] = { f20: d.f20[modalFareIdx], f40: d.f40[modalFareIdx] };
     });
   });
+  // 1km: 고시 별표에 있으나 실제 지역 데이터 최솟값은 2km → 직접 추가
+  if (!map[1]) {
+    map[1] = { f20: OFFICIAL_1KM_F20[modalFareIdx], f40: OFFICIAL_1KM_F40[modalFareIdx] };
+  }
   return map;
 }
 
@@ -1342,13 +1359,28 @@ function buildAllPanels() {
 
   var baseMap = buildBaseDistMap();
 
-  // 인천·평택은 기본 요율에서 계산
+  // 인천기점(+20%)·평택기점(+18%) 할증은 안전위탁운임에만 적용 (고시 별표1 제23조)
+  // 사업자간 운임·안전운송운임에는 지역할증 미적용
   var icnMap = {}, ptkMap = {};
-  Object.keys(baseMap).forEach(function (dist) {
-    var b = baseMap[dist];
-    icnMap[dist] = { f20: surRound(b.f20, 20), f40: surRound(b.f40, 20) };
-    ptkMap[dist] = { f20: surRound(b.f20, 18), f40: surRound(b.f40, 18) };
-  });
+  if (modalFareIdx === 0) {
+    Object.keys(baseMap).forEach(function (dist) {
+      var b = baseMap[dist];
+      icnMap[dist] = { f20: surRound(b.f20, 20), f40: surRound(b.f40, 20) };
+      ptkMap[dist] = { f20: surRound(b.f20, 18), f40: surRound(b.f40, 18) };
+    });
+  } else {
+    icnMap = baseMap;
+    ptkMap = baseMap;
+  }
+
+  // 패널 부제: 안전위탁이면 할증 표시, 아니면 미적용 안내
+  var isWitax = (modalFareIdx === 0);
+  document.getElementById('icn-panel-sub').textContent = isWitax
+    ? '인천신항·인천항·인천여객터미널 기점 (+20%)'
+    : '지역할증 없음 — 안전위탁운임에만 적용됩니다';
+  document.getElementById('ptk-panel-sub').textContent = isWitax
+    ? '평택항 기점 (+18%)'
+    : '지역할증 없음 — 안전위탁운임에만 적용됩니다';
 
   var currentDist = (state.portData && state.type === '왕복') ? state.portData.dist : null;
   renderPanel('tbody-base', baseMap, currentDist);
