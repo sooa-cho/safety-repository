@@ -329,6 +329,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
       <button class="sur-item" data-key="방사성" data-rate="200" data-warn="1"><div class="sur-top"><div class="sur-check">✓</div><div class="sur-name">☢️ 방사성물질</div></div><div class="sur-rate">+200%</div></button>
       <button class="sur-item" data-key="45ft" data-rate="12.5" data-warn="0"><div class="sur-top"><div class="sur-check">✓</div><div class="sur-name">📦 45FT 컨테이너</div></div><div class="sur-rate">+12.5%</div></button>
       <button class="sur-item" data-key="중량" data-rate="0" data-warn="0"><div class="sur-top"><div class="sur-check">✓</div><div class="sur-name">⚖️ 중량물 초과</div></div><div class="sur-rate">초과톤당 +10%</div></button>
+      <button class="sur-item" data-key="xray" data-rate="100000" data-type="fixed" data-warn="0"><div class="sur-top"><div class="sur-check">✓</div><div class="sur-name">🔍 검색대(X-RAY)</div></div><div class="sur-rate">+100,000원</div></button>
+      <button class="sur-item" data-key="공컨반납" data-rate="40000" data-type="fixed" data-warn="0"><div class="sur-top"><div class="sur-check">✓</div><div class="sur-name">🔁 공컨반납비(편도)</div></div><div class="sur-rate">+40,000원</div></button>
     </div>
     <div class="weight-input-wrap" id="weight-wrap">
       <div class="weight-row"><span class="weight-label">40FT 초과 중량</span><input class="weight-input" id="w40" type="number" min="0" max="15" placeholder="0"><span style="font-size:0.72rem;color:var(--text2);">톤</span></div>
@@ -927,13 +929,16 @@ function getSurRates() {
   const rates = [];
   document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').forEach(function (el) {
     const key = el.getAttribute('data-key');
+    const label = el.querySelector('.sur-name').textContent.trim();
     if (key === '중량') {
       const w40 = parseFloat(document.getElementById('w40').value) || 0;
       const w20 = parseFloat(document.getElementById('w20').value) || 0;
       if (w40 > 0) rates.push({ label: '중량초과40FT(' + w40 + '톤)', rate: w40 * 10, ft: '40' });
       if (w20 > 0) rates.push({ label: '중량초과20FT(' + w20 + '톤)', rate: w20 * 10, ft: '20' });
+    } else if (el.getAttribute('data-type') === 'fixed') {
+      rates.push({ label: label, amount: parseFloat(el.getAttribute('data-rate')), fixed: true });
     } else {
-      rates.push({ label: el.querySelector('.sur-name').textContent.trim(), rate: parseFloat(el.getAttribute('data-rate')) });
+      rates.push({ label: label, rate: parseFloat(el.getAttribute('data-rate')) });
     }
   });
   return rates;
@@ -946,30 +951,38 @@ function calcMulti(arr) {
 }
 
 function calcSur() {
-  const rates = getSurRates();
+  const allRates = getSurRates();
   const checked = document.querySelectorAll('.sur-item.checked,.sur-item.checked-warn').length;
 
   if (checked > 0) setDone('sn4', 'sv4', checked + '개 적용');
   else clearDone('sn4', 'sv4', '4');
 
   const surEl = document.getElementById('sur-result');
-  if (!state.portData || !rates.length || !state.fareType) { surEl.classList.remove('show'); return; }
+  if (!state.portData || !allRates.length || !state.fareType) { surEl.classList.remove('show'); return; }
 
   const idx = { '위탁': 0, '사업자': 1, '운송': 2 }[state.fareType];
-  const common = rates.filter(function (r) { return !r.ft; }).map(function (r) { return r.rate; });
-  const rate40 = calcMulti(common.concat(rates.filter(function (r) { return r.ft === '40'; }).map(function (r) { return r.rate; })));
-  const rate20 = calcMulti(common.concat(rates.filter(function (r) { return r.ft === '20'; }).map(function (r) { return r.rate; })));
-  const final40 = Math.round(state.portData.f40[idx] * (1 + rate40 / 100) / 100) * 100;
-  const final20 = Math.round(state.portData.f20[idx] * (1 + rate20 / 100) / 100) * 100;
+  const pctRates  = allRates.filter(function (r) { return !r.fixed; });
+  const fixedRates = allRates.filter(function (r) { return r.fixed; });
+  const fixedTotal = fixedRates.reduce(function (s, r) { return s + r.amount; }, 0);
+
+  const common = pctRates.filter(function (r) { return !r.ft; }).map(function (r) { return r.rate; });
+  const rate40 = calcMulti(common.concat(pctRates.filter(function (r) { return r.ft === '40'; }).map(function (r) { return r.rate; })));
+  const rate20 = calcMulti(common.concat(pctRates.filter(function (r) { return r.ft === '20'; }).map(function (r) { return r.rate; })));
+  const final40 = Math.round(state.portData.f40[idx] * (1 + rate40 / 100) / 100) * 100 + fixedTotal;
+  const final20 = Math.round(state.portData.f20[idx] * (1 + rate20 / 100) / 100) * 100 + fixedTotal;
   const lbl = { '위탁': '안전위탁', '사업자': '사업자간', '운송': '안전운송' }[state.fareType];
 
   document.getElementById('sr-label-40').textContent = '40FT ' + lbl + ' (최종)';
   document.getElementById('sr-label-20').textContent = '20FT ' + lbl + ' (최종)';
   document.getElementById('sr-f40').textContent = fmt(final40);
   document.getElementById('sr-f20').textContent = fmt(final20);
+
+  const parts = [];
+  if (pctRates.length) parts.push('40FT ' + rate40.toFixed(1) + '% · 20FT ' + rate20.toFixed(1) + '%');
+  if (fixedTotal > 0) parts.push('정액 +' + fixedTotal.toLocaleString('ko-KR') + '원');
   document.getElementById('sur-detail').textContent =
-    '적용: ' + rates.map(function (r) { return r.label; }).join(', ') +
-    ' / 40FT ' + rate40.toFixed(1) + '% · 20FT ' + rate20.toFixed(1) + '%';
+    '적용: ' + allRates.map(function (r) { return r.label; }).join(', ') +
+    (parts.length ? ' / ' + parts.join(' + ') : '');
   surEl.classList.add('show');
 }
 
