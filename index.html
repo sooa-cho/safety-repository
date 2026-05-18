@@ -1275,33 +1275,44 @@ if ('serviceWorker' in navigator) {
 // ────────────────────────────────────────────
 // 거리별 운임표 모달 (왕복 전용 · 3개 콘솔 박스)
 // ────────────────────────────────────────────
-// 데이터 분석 결과:
-//   기본 운임 → 마산항 (표준 기준, 가장 작은 거리 2km부터)
-//   인천지역  → 인천항 (고시에 지역할증 포함, 3km부터)
-//   평택지역  → 평택항 (고시에 지역할증 포함, 8km부터)
+// 기본 운임: 인천·평택 항구 제외한 모든 표준 항구 데이터로 거리별 요율 수집
+//           (같은 거리면 동일 요율 → 항구 무관)
+// 인천지역:  기본 운임 × 1.20, 백원 단위 반올림
+// 평택지역:  기본 운임 × 1.18, 백원 단위 반올림
 
 var modalFareIdx = 0; // 0=위탁, 1=사업자, 2=운송
 
-var MODAL_PORTS = { base: '마산항', icn: '인천항', ptk: '평택항' };
-var MODAL_TBODY  = { base: 'tbody-base', icn: 'tbody-icn', ptk: 'tbody-ptk' };
+// 인천·평택 지역 항구 (기본 요율 수집에서 제외)
+var REGIONAL_PORTS = ['인천신항', '인천항', '인천국제여객터미널', '평택항'];
 
-// 항구별 거리→운임 맵 추출
-function buildDistMap(portName) {
+function surRound(base, pct) {
+  return Math.round(base * (1 + pct / 100) / 100) * 100;
+}
+
+// 표준 항구 전체를 순회해 거리→기본요율 맵 생성 (항구 무관 순수 거리별 요율)
+function buildBaseDistMap() {
   var map = {};
   Object.keys(TARIFF).forEach(function (key) {
-    var d = (TARIFF[key] || {})[portName];
-    if (!d || map[d.dist]) return;
-    map[d.dist] = { f20: d.f20[modalFareIdx], f40: d.f40[modalFareIdx] };
+    var entry = TARIFF[key];
+    Object.keys(entry).forEach(function (portKey) {
+      if (portKey.indexOf('편도') >= 0) return;
+      if (REGIONAL_PORTS.indexOf(portKey) >= 0) return;
+      var d = entry[portKey];
+      if (map[d.dist]) return;
+      map[d.dist] = { f20: d.f20[modalFareIdx], f40: d.f40[modalFareIdx] };
+    });
   });
   return map;
 }
 
-// 패널 하나의 tbody 렌더링
-function renderPanelTable(tbodyId, distMap, currentDist) {
+// tbody 렌더링 (distMap의 f20/f40를 직접 사용)
+function renderPanel(tbodyId, distMap, currentDist) {
   var dists = Object.keys(distMap).map(Number).sort(function (a, b) { return a - b; });
   var tbody = document.getElementById(tbodyId);
-  if (!dists.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text3)">데이터 없음</td></tr>'; return; }
-
+  if (!dists.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text3)">데이터 없음</td></tr>';
+    return;
+  }
   function w(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
   tbody.innerHTML = dists.map(function (dist) {
     var r  = distMap[dist];
@@ -1319,22 +1330,33 @@ function buildAllPanels() {
   var empty = document.getElementById('modal-empty');
   if (!activeNotice || !Object.keys(TARIFF).length) {
     empty.style.display = 'block';
-    ['rt-panel-base','rt-panel-icn','rt-panel-ptk'].forEach(function(id){ document.getElementById(id).style.display='none'; });
+    ['rt-panel-base', 'rt-panel-icn', 'rt-panel-ptk'].forEach(function (id) {
+      document.getElementById(id).style.display = 'none';
+    });
     return;
   }
   empty.style.display = 'none';
-  ['rt-panel-base','rt-panel-icn','rt-panel-ptk'].forEach(function(id){ document.getElementById(id).style.display=''; });
-
-  var currentDist = (state.portData && state.type === '왕복') ? state.portData.dist : null;
-  ['base','icn','ptk'].forEach(function (col) {
-    renderPanelTable(MODAL_TBODY[col], buildDistMap(MODAL_PORTS[col]), currentDist);
+  ['rt-panel-base', 'rt-panel-icn', 'rt-panel-ptk'].forEach(function (id) {
+    document.getElementById(id).style.display = '';
   });
 
-  // 현재 거리 행으로 스크롤 (기본 패널 우선)
+  var baseMap = buildBaseDistMap();
+
+  // 인천·평택은 기본 요율에서 계산
+  var icnMap = {}, ptkMap = {};
+  Object.keys(baseMap).forEach(function (dist) {
+    var b = baseMap[dist];
+    icnMap[dist] = { f20: surRound(b.f20, 20), f40: surRound(b.f40, 20) };
+    ptkMap[dist] = { f20: surRound(b.f20, 18), f40: surRound(b.f40, 18) };
+  });
+
+  var currentDist = (state.portData && state.type === '왕복') ? state.portData.dist : null;
+  renderPanel('tbody-base', baseMap, currentDist);
+  renderPanel('tbody-icn',  icnMap,  currentDist);
+  renderPanel('tbody-ptk',  ptkMap,  currentDist);
+
   setTimeout(function () {
-    var hl = document.querySelector('#rt-panel-base .rt-highlight') ||
-             document.querySelector('#rt-panel-icn .rt-highlight') ||
-             document.querySelector('#rt-panel-ptk .rt-highlight');
+    var hl = document.querySelector('#rt-panel-base .rt-highlight');
     if (hl) hl.scrollIntoView({ block: 'center' });
   }, 60);
 }
@@ -1359,7 +1381,6 @@ function closeRateModal() {
   document.body.style.overflow = '';
 }
 
-// 콘솔 박스 토글
 document.querySelectorAll('.rt-panel-head').forEach(function (head) {
   head.addEventListener('click', function () {
     document.getElementById(head.getAttribute('data-panel')).classList.toggle('open');
