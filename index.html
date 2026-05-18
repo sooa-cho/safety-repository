@@ -173,69 +173,94 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 #offline-badge { display:none; position:fixed; bottom:14px; left:50%; transform:translateX(-50%); background:#555; color:#fff; font-size:0.7rem; font-weight:700; padding:6px 14px; border-radius:20px; z-index:999; white-space:nowrap; box-shadow:0 2px 10px rgba(0,0,0,0.25); }
 #offline-badge.show { display:block; }
 
-/* ── PC 2단 레이아웃 (900px+) — 세로 한 화면 ── */
+/* ══════════════════════════════════════════
+   PC 레이아웃 (900px+) — 완전 재설계
+   ══════════════════════════════════════════ */
 @media (min-width:900px) {
-  /* 전체 레이아웃 */
-  body { display:flex; flex-direction:column; height:100vh; min-height:0; overflow:hidden; padding-bottom:0; }
 
-  /* 헤더 — 콘텐츠 폭과 동일하게 margin으로 인셋 */
-  .header { flex-shrink:0; height:50px; padding:0; margin:0 18px; gap:8px; }
-  .sebang-logo { height:17px; max-width:72px; }
+  /* ── 1. body: 세로 flex, 100vh 고정 ── */
+  body {
+    display:flex; flex-direction:column;
+    height:100vh; overflow:hidden; padding-bottom:0;
+  }
+
+  /* ── 2. 헤더 ── */
+  .header {
+    flex-shrink:0; position:static;
+    height:52px; padding:0 20px; gap:10px;
+  }
+  .sebang-logo { height:18px; max-width:78px; }
   .sebang-text { font-size:1.1rem; }
-  .header-divider { height:24px; }
-  .header-text h1 { font-size:0.88rem; }
-  .header-text p { font-size:0.56rem; }
-  .vat { font-size:0.55rem; padding:3px 6px; }
+  .header-divider { height:26px; }
+  .header-text h1 { font-size:0.9rem; }
+  .header-text p { font-size:0.57rem; }
+  .vat { font-size:0.57rem; padding:3px 7px; }
 
-  /* 배너 — 헤더와 동일 */
-  .banner { flex-shrink:0; padding:4px 0; margin:0 18px; }
-  .banner-label { font-size:0.63rem; }
-  .banner-select { font-size:0.66rem; }
-  .banner-gov { font-size:0.6rem; }
+  /* ── 3. 배너 ── */
+  .banner { flex-shrink:0; padding:5px 20px; }
+  .banner-label { font-size:0.65rem; }
+  .banner-select { font-size:0.68rem; }
+  .banner-gov { font-size:0.62rem; }
 
-  /* #result가 pc-left 남은 공간을 채우도록 */
-  #result { flex:1; min-height:0; }
-  .result-wrap { flex:1; min-height:0; }
-
-  /* 2단 컨테이너 — 헤더와 동일 전체 폭 */
+  /* ── 4. 2단 그리드: CSS grid → 양쪽 컬럼 높이 항상 동일 ── */
   .pc-wrap {
     flex:1; min-height:0;
-    display:flex; gap:12px;
-    padding:10px 18px;
+    display:grid;
+    grid-template-columns:1fr 390px;
+    gap:12px;
+    padding:10px 20px;
     overflow:hidden;
   }
-  .pc-left  { flex:1; min-width:0; display:flex; flex-direction:column; gap:7px; overflow-y:auto; }
-  .pc-right { flex:0 0 396px;     display:flex; flex-direction:column; gap:7px; overflow-y:auto; }
 
-  /* STEP 카드 압축 */
-  .step { margin:0; }
-  .step-head { padding:7px 13px; }
-  .step-body { padding:9px 13px; }
-  .step-num { width:21px; height:21px; font-size:0.66rem; }
-  .step-title { font-size:0.83rem; }
-  .step-tag { font-size:0.61rem; }
-  .step-val { font-size:0.7rem; }
+  /* ── 5. 양쪽 컬럼 공통: flex 세로 ── */
+  .pc-left,
+  .pc-right {
+    display:flex; flex-direction:column;
+    gap:8px; min-height:0; overflow:hidden;
+  }
 
-  /* 검색창 */
-  #search-input { padding:8px 10px 8px 36px; font-size:0.92rem; }
+  /* ── 6. STEP 카드 공통 압축 ── */
+  .step { margin:0; flex-shrink:0; }
+  .step-head { padding:8px 14px; }
+  .step-body { padding:10px 14px; }
+  .step-num { width:22px; height:22px; font-size:0.67rem; }
+  .step-title { font-size:0.84rem; }
+  .step-tag { font-size:0.62rem; }
+  .step-val { font-size:0.71rem; }
+
+  /* ── 7. 검색창 ── */
+  #search-input { padding:9px 10px 9px 36px; font-size:0.93rem; }
   .search-icon { font-size:13px; left:10px; }
-  .hint-text { display:none; }          /* PC: 힌트 숨김 */
+  .hint-text { display:none; }
 
-  /* 운임 유형 설명 */
+  /* ── 8. 토글 버튼 ── */
+  .tog-btn { padding:8px 6px; min-height:38px; font-size:0.82rem; }
   .fare-type-desc { font-size:0.64rem; padding:7px 9px; margin-top:7px; line-height:1.45; }
 
-  /* 토글 버튼 */
-  .tog-btn { padding:8px 6px; min-height:38px; font-size:0.82rem; }
+  /* ── 9. 로딩 / 에러 ── */
+  #loading { padding:14px; flex-shrink:0; }
+  #inline-error { margin:0; font-size:0.66rem; padding:8px 11px; flex-shrink:0; }
 
-  /* 결과 카드 */
-  .result-wrap { margin:0; }
-  .result-top { padding:9px 13px; }
+  /* ── 10. 결과 카드: 좌측 컬럼 남은 공간 전부 채움 ── */
+  #result {
+    flex:1; min-height:0;
+    /* display:flex + flex-direction:column은 base CSS + JS가 처리 */
+  }
+  .result-wrap {
+    margin:0; flex:1; min-height:0;
+    display:flex; flex-direction:column; overflow:hidden;
+  }
+  .result-top { flex-shrink:0; padding:9px 13px; }
   .result-loc { font-size:0.88rem; }
-  .result-km { font-size:0.72rem; font-weight:700; color:var(--mint); margin-top:3px; letter-spacing:-0.01em; }
+  .result-km {
+    font-size:0.72rem; font-weight:700;
+    color:var(--mint); margin-top:3px; letter-spacing:-0.01em;
+  }
   .result-sub { font-size:0.59rem; margin-top:2px; }
-  .port-scroll { padding:7px 12px 0; }
+  .port-scroll { flex-shrink:0; padding:7px 12px 0; }
   .ptab { padding:6px 11px; font-size:0.7rem; min-height:30px; }
-  .fare-area { padding:0 12px 9px; }
+  /* fare-area가 남은 세로 공간을 채우며 내부 스크롤 */
+  .fare-area { flex:1; overflow-y:auto; padding:0 12px 9px; }
   .fare-cards { gap:8px; }
   .fare-card-head { padding:6px 10px; }
   .ft-label { font-size:0.64rem; padding:2px 5px; }
@@ -246,8 +271,21 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   .fv { font-size:0.8rem; }
   .fare-row.selected-type { padding:5px 8px; }
   .fare-row.selected-type .fv { font-size:0.9rem; }
+  /* VAT 노트: 결과 카드 맨 아래 고정 */
+  .note { flex-shrink:0; margin:0; padding:6px 11px; font-size:0.6rem; line-height:1.45; }
 
-  /* 할증 그리드 */
+  /* ── 11. 우측: STEP 4(할증)가 남은 공간 채움 ── */
+  .pc-right > .step {
+    flex:1; min-height:0;
+    display:flex; flex-direction:column;
+  }
+  .pc-right > .step > .step-head { flex-shrink:0; }
+  .pc-right > .step > .step-body {
+    flex:1; overflow-y:auto;
+    padding:10px 14px;
+  }
+
+  /* ── 12. 할증 그리드 ── */
   .sur-grid { grid-template-columns:1fr 1fr; }
   .sur-item { min-height:46px; padding:6px 9px; }
   .sur-name { font-size:0.7rem; }
@@ -255,14 +293,15 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   .sur-check { width:16px; height:16px; font-size:9px; }
   .sur-top { gap:6px; }
 
-  /* 중량 입력 */
+  /* ── 13. 중량 입력 ── */
   .weight-input-wrap { padding:7px 9px; margin-top:7px; }
   .weight-row { margin-bottom:6px; }
   .weight-label { font-size:0.65rem; min-width:90px; }
   .weight-input { width:52px; padding:5px 6px; font-size:0.82rem; }
 
-  /* 할증 최종운임 */
-  .sur-result { margin:0; }
+  /* ── 14. 할증 최종운임: 우측 하단 고정 ── */
+  .sur-result { flex-shrink:0; margin:0; }
+  .sur-result.show { margin-top:8px; margin-bottom:0; padding:12px 14px; }
   .sur-result-title { font-size:0.71rem; margin-bottom:7px; }
   .sur-final-grid { gap:6px; }
   .sur-final-item { padding:7px 10px; }
@@ -270,13 +309,6 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   .sfv { font-size:0.88rem; }
   .sur-detail { margin-top:7px; padding-top:7px; font-size:0.62rem; line-height:1.65; }
   .sur-multi-note { margin-top:5px; font-size:0.6rem; }
-
-  /* 노트 / 에러 */
-  .note { margin:0; padding:6px 11px; font-size:0.6rem; line-height:1.45; }
-  #inline-error { margin:0; font-size:0.66rem; padding:8px 11px; }
-
-  /* 로딩 */
-  #loading { padding:16px; }
 }
 </style>
 </head>
