@@ -649,6 +649,12 @@ const state = {
 let TARIFF = {};
 let activeNotice = null;
 let isLoading = false;
+let tariffLoaded = false;
+
+// 운임 유형 인덱스/레이블 (전체에서 공유)
+const FARE_TYPES     = ['위탁', '사업자', '운송'];
+const FARE_TYPE_IDX  = { '위탁': 0, '사업자': 1, '운송': 2 };
+const FARE_LABEL_MAP = { '위탁': '안전위탁', '사업자': '사업자간', '운송': '안전운송' };
 
 // ────────────────────────────────────────────
 // 고시 데이터 동적 로딩
@@ -706,6 +712,8 @@ function loadNoticeData(notice) {
         const chunk = window['TARIFF_CHUNK' + i];
         if (chunk) Object.assign(TARIFF, chunk);
       }
+      tariffLoaded = true;
+      _distCache = [null, null, null];
       activeNotice = notice;
       updateNoticeUI(notice);
       hideLoading();
@@ -856,7 +864,7 @@ function resetAll() {
   document.getElementById('btn-왕복').classList.remove('active');
   document.getElementById('btn-편도').classList.remove('active');
 
-  ['위탁', '사업자', '운송'].forEach(function (k) {
+  FARE_TYPES.forEach(function (k) {
     document.getElementById('ft-' + k).classList.remove('active');
   });
   document.getElementById('ftdesc').style.display = 'none';
@@ -1012,7 +1020,7 @@ function setFareType(t) {
   const ftdesc = document.getElementById('ftdesc');
   if (state.fareType === t) {
     state.fareType = null;
-    ['위탁', '사업자', '운송'].forEach(function (k) {
+    FARE_TYPES.forEach(function (k) {
       document.getElementById('ft-' + k).classList.remove('active');
     });
     ftdesc.style.display = 'none';
@@ -1023,12 +1031,12 @@ function setFareType(t) {
     return;
   }
   state.fareType = t;
-  ['위탁', '사업자', '운송'].forEach(function (k) {
+  FARE_TYPES.forEach(function (k) {
     document.getElementById('ft-' + k).classList.toggle('active', k === t);
   });
   ftdesc.innerHTML = fareDesc[t];
   ftdesc.style.display = 'block';
-  setDone('sn3', 'sv3', { '위탁': '안전위탁', '사업자': '사업자간', '운송': '안전운송' }[t]);
+  setDone('sn3', 'sv3', FARE_LABEL_MAP[t]);
   applyFareHighlight();
   calcSur();
   tryShowResult();
@@ -1045,9 +1053,9 @@ function tryShowResult() {
 
 function applyFareHighlight() {
   if (!state.fareType) return;
-  const idx = { '위탁': 0, '사업자': 1, '운송': 2 }[state.fareType];
+  const idx = FARE_TYPE_IDX[state.fareType];
   ['f40', 'f20'].forEach(function (ft) {
-    ['위탁', '사업자', '운송'].forEach(function (k, i) {
+    FARE_TYPES.forEach(function (k, i) {
       const row = document.getElementById('row-' + ft + '-' + k);
       row.classList.remove('selected-type', 'dimmed');
       row.classList.add(i === idx ? 'selected-type' : 'dimmed');
@@ -1109,7 +1117,7 @@ function selectPort(portName) {
   document.getElementById('dist-km').textContent = d.dist + ' km';
   document.getElementById('r-km').textContent =
     portName.replace('(편도)', '') + ' | 거리 ' + d.dist + ' km | ' + state.type + ' 운임';
-  ['위탁', '사업자', '운송'].forEach(function (k, i) {
+  FARE_TYPES.forEach(function (k, i) {
     document.getElementById('f40-' + k).textContent = fmt(d.f40[i]);
     document.getElementById('f20-' + k).textContent = fmt(d.f20[i]);
   });
@@ -1175,7 +1183,7 @@ function calcSur() {
   const surEl = document.getElementById('sur-result');
   if (!state.portData || !allRates.length || !state.fareType) { surEl.classList.remove('show'); return; }
 
-  const idx = { '위탁': 0, '사업자': 1, '운송': 2 }[state.fareType];
+  const idx = FARE_TYPE_IDX[state.fareType];
   const pctRates  = allRates.filter(function (r) { return !r.fixed; });
   const fixedRates = allRates.filter(function (r) { return r.fixed; });
   const fixedTotal = fixedRates.reduce(function (s, r) { return s + r.amount; }, 0);
@@ -1185,7 +1193,7 @@ function calcSur() {
   const rate20 = calcMulti(common.concat(pctRates.filter(function (r) { return r.ft === '20'; }).map(function (r) { return r.rate; })));
   const final40 = Math.round(state.portData.f40[idx] * (1 + rate40 / 100) / 100) * 100 + fixedTotal;
   const final20 = Math.round(state.portData.f20[idx] * (1 + rate20 / 100) / 100) * 100 + fixedTotal;
-  const lbl = { '위탁': '안전위탁', '사업자': '사업자간', '운송': '안전운송' }[state.fareType];
+  const lbl = FARE_LABEL_MAP[state.fareType];
 
   document.getElementById('sr-label-40').textContent = '40FT ' + lbl + ' (최종)';
   document.getElementById('sr-label-20').textContent = '20FT ' + lbl + ' (최종)';
@@ -1225,7 +1233,7 @@ function resetStep(step) {
     document.getElementById('btn-편도').classList.remove('active');
   } else if (step === 3) {
     state.fareType = null;
-    ['위탁', '사업자', '운송'].forEach(function (k) {
+    FARE_TYPES.forEach(function (k) {
       document.getElementById('ft-' + k).classList.remove('active');
     });
     document.getElementById('ftdesc').style.display = 'none';
@@ -1248,7 +1256,7 @@ function resetStep(step) {
 document.getElementById('btn-왕복').addEventListener('click', function () { setType('왕복'); });
 document.getElementById('btn-편도').addEventListener('click', function () { setType('편도'); });
 
-['위탁', '사업자', '운송'].forEach(function (k) {
+FARE_TYPES.forEach(function (k) {
   document.getElementById('ft-' + k).addEventListener('click', function () { setFareType(k); });
 });
 
@@ -1289,6 +1297,7 @@ if ('serviceWorker' in navigator) {
 // 평택지역:  기본 운임 × 1.18, 백원 단위 반올림
 
 var modalFareIdx = 0; // 0=위탁, 1=사업자, 2=운송
+var _distCache = [null, null, null]; // buildBaseDistMap() 결과를 fareIdx별로 캐시
 
 // 인천·평택 지역 항구 (기본 요율 수집에서 제외)
 var REGIONAL_PORTS = ['인천신항', '인천항', '인천국제여객터미널', '평택항'];
@@ -1303,7 +1312,9 @@ function surRound(base, pct) {
 }
 
 // 표준 항구 전체를 순회해 거리→기본요율 맵 생성 (항구 무관 순수 거리별 요율)
+// fareIdx별 결과를 _distCache에 보관 → 고시 전환 전까지 재계산 없음
 function buildBaseDistMap() {
+  if (_distCache[modalFareIdx]) return _distCache[modalFareIdx];
   var map = {};
   Object.keys(TARIFF).forEach(function (key) {
     var entry = TARIFF[key];
@@ -1319,6 +1330,7 @@ function buildBaseDistMap() {
   if (!map[1]) {
     map[1] = { f20: OFFICIAL_1KM_F20[modalFareIdx], f40: OFFICIAL_1KM_F40[modalFareIdx] };
   }
+  _distCache[modalFareIdx] = map;
   return map;
 }
 
@@ -1345,7 +1357,7 @@ function renderPanel(tbodyId, distMap, currentDist) {
 
 function buildAllPanels() {
   var empty = document.getElementById('modal-empty');
-  if (!activeNotice || !Object.keys(TARIFF).length) {
+  if (!activeNotice || !tariffLoaded) {
     empty.style.display = 'block';
     ['rt-panel-base', 'rt-panel-icn', 'rt-panel-ptk'].forEach(function (id) {
       document.getElementById(id).style.display = 'none';
@@ -1374,13 +1386,11 @@ function buildAllPanels() {
   }
 
   // 패널 부제: 안전위탁이면 할증 표시, 아니면 미적용 안내
-  var isWitax = (modalFareIdx === 0);
-  document.getElementById('icn-panel-sub').textContent = isWitax
-    ? '인천신항·인천항·인천여객터미널 기점 (+20%)'
-    : '지역할증 없음 — 안전위탁운임에만 적용됩니다';
-  document.getElementById('ptk-panel-sub').textContent = isWitax
-    ? '평택항 기점 (+18%)'
-    : '지역할증 없음 — 안전위탁운임에만 적용됩니다';
+  var noSur = '지역할증 없음 — 안전위탁운임에만 적용됩니다';
+  document.getElementById('icn-panel-sub').textContent = modalFareIdx === 0
+    ? '인천신항·인천항·인천여객터미널 기점 (+20%)' : noSur;
+  document.getElementById('ptk-panel-sub').textContent = modalFareIdx === 0
+    ? '평택항 기점 (+18%)' : noSur;
 
   var currentDist = (state.portData && state.type === '왕복') ? state.portData.dist : null;
   renderPanel('tbody-base', baseMap, currentDist);
@@ -1395,9 +1405,9 @@ function buildAllPanels() {
 
 function openRateModal() {
   if (!activeNotice) { showInlineError('고시 데이터 로딩 후 이용하실 수 있습니다.'); return; }
-  if (state.fareType) modalFareIdx = { '위탁': 0, '사업자': 1, '운송': 2 }[state.fareType];
+  if (state.fareType) modalFareIdx = FARE_TYPE_IDX[state.fareType];
 
-  var fareKey = ['위탁', '사업자', '운송'][modalFareIdx];
+  var fareKey = FARE_TYPES[modalFareIdx];
   document.querySelectorAll('[data-mf-fare]').forEach(function (btn) {
     btn.classList.toggle('active', btn.getAttribute('data-mf-fare') === fareKey);
   });
@@ -1430,7 +1440,7 @@ document.addEventListener('keydown', function (e) {
 
 document.querySelectorAll('[data-mf-fare]').forEach(function (btn) {
   btn.addEventListener('click', function () {
-    modalFareIdx = { '위탁': 0, '사업자': 1, '운송': 2 }[btn.getAttribute('data-mf-fare')];
+    modalFareIdx = FARE_TYPE_IDX[btn.getAttribute('data-mf-fare')];
     document.querySelectorAll('[data-mf-fare]').forEach(function (b) {
       b.classList.toggle('active', b === btn);
     });
