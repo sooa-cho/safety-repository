@@ -178,8 +178,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   /* 전체 레이아웃 */
   body { display:flex; flex-direction:column; height:100vh; min-height:0; overflow:hidden; padding-bottom:0; }
 
-  /* 헤더 — pc-wrap 좌우 패딩(18px)과 정렬 통일 */
-  .header { flex-shrink:0; height:50px; padding:0 18px; gap:8px; }
+  /* 헤더 — 콘텐츠 폭과 동일하게 margin으로 인셋 */
+  .header { flex-shrink:0; height:50px; padding:0; margin:0 18px; gap:8px; }
   .sebang-logo { height:17px; max-width:72px; }
   .sebang-text { font-size:1.1rem; }
   .header-divider { height:24px; }
@@ -187,8 +187,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   .header-text p { font-size:0.56rem; }
   .vat { font-size:0.55rem; padding:3px 6px; }
 
-  /* 배너 — 헤더와 동일 패딩 */
-  .banner { flex-shrink:0; padding:4px 18px; }
+  /* 배너 — 헤더와 동일 */
+  .banner { flex-shrink:0; padding:4px 0; margin:0 18px; }
   .banner-label { font-size:0.63rem; }
   .banner-select { font-size:0.66rem; }
   .banner-gov { font-size:0.6rem; }
