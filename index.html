@@ -126,7 +126,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 #load-text { font-size:0.72rem; color:var(--text3); margin-top:8px; }
 
 /* ── 결과 ── */
-#result { display:none; }
+#result { display:none; flex-direction:column; }
 .result-wrap { margin:14px 14px 0; background:var(--bg2); border:1px solid var(--border); border-left:4px solid var(--mint); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); scroll-margin-top:80px; }
 .result-top { padding:14px 16px; background:var(--gray-dark); border-bottom:3px solid var(--mint); }
 .result-loc { font-size:1rem; font-weight:700; color:#fff; }
@@ -178,8 +178,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   /* 전체 레이아웃 */
   body { display:flex; flex-direction:column; height:100vh; min-height:0; overflow:hidden; padding-bottom:0; }
 
-  /* 헤더 압축 */
-  .header { flex-shrink:0; height:50px; padding:0 28px; gap:8px; }
+  /* 헤더 — pc-wrap 좌우 패딩(18px)과 정렬 통일 */
+  .header { flex-shrink:0; height:50px; padding:0 18px; gap:8px; }
   .sebang-logo { height:17px; max-width:72px; }
   .sebang-text { font-size:1.1rem; }
   .header-divider { height:24px; }
@@ -187,11 +187,15 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   .header-text p { font-size:0.56rem; }
   .vat { font-size:0.55rem; padding:3px 6px; }
 
-  /* 배너 압축 */
-  .banner { flex-shrink:0; padding:4px 28px; }
+  /* 배너 — 헤더와 동일 패딩 */
+  .banner { flex-shrink:0; padding:4px 18px; }
   .banner-label { font-size:0.63rem; }
   .banner-select { font-size:0.66rem; }
   .banner-gov { font-size:0.6rem; }
+
+  /* #result가 pc-left 남은 공간을 채우도록 */
+  #result { flex:1; min-height:0; }
+  .result-wrap { flex:1; min-height:0; }
 
   /* 2단 컨테이너 */
   .pc-wrap {
@@ -936,7 +940,7 @@ function showResult() {
   });
 
   selectPort(ports[0]);
-  document.getElementById('result').style.display = 'block';
+  document.getElementById('result').style.display = 'flex';
   setTimeout(function () {
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 150);
