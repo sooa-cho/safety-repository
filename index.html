@@ -173,6 +173,36 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 #offline-badge { display:none; position:fixed; bottom:14px; left:50%; transform:translateX(-50%); background:#555; color:#fff; font-size:0.7rem; font-weight:700; padding:6px 14px; border-radius:20px; z-index:999; white-space:nowrap; box-shadow:0 2px 10px rgba(0,0,0,0.25); }
 #offline-badge.show { display:block; }
 
+/* ── 거리별 운임표 모달 ── */
+#rate-table-btn { appearance:none; font-family:inherit; margin-left:auto; padding:4px 11px; border-radius:6px; border:1.5px solid var(--border); background:#fff; color:var(--gray-dark); font-size:0.68rem; font-weight:700; cursor:pointer; white-space:nowrap; transition:all 0.15s; }
+#rate-table-btn:hover { background:var(--gray-dark); color:#fff; border-color:var(--gray-dark); }
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:500; align-items:center; justify-content:center; padding:16px; }
+.modal-overlay.open { display:flex; }
+.modal-box { background:#fff; border-radius:16px; width:100%; max-width:660px; max-height:88vh; display:flex; flex-direction:column; box-shadow:0 8px 40px rgba(0,0,0,0.3); overflow:hidden; }
+.modal-head { background:#3d3d3d; padding:13px 18px; display:flex; align-items:center; gap:10px; border-bottom:3px solid var(--mint); flex-shrink:0; }
+.modal-title { font-size:0.92rem; font-weight:700; color:#fff; flex:1; }
+.modal-notice { font-size:0.64rem; color:rgba(255,255,255,0.55); white-space:nowrap; }
+.modal-close { appearance:none; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); color:#fff; font-size:0.9rem; width:28px; height:28px; border-radius:7px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 0.15s; }
+.modal-close:hover { background:rgba(255,255,255,0.28); }
+.modal-filters { padding:9px 16px; border-bottom:1px solid var(--border2); display:flex; gap:8px; align-items:center; background:var(--bg3); flex-shrink:0; flex-wrap:wrap; }
+.mf-label { font-size:0.67rem; color:var(--text2); flex-shrink:0; }
+.mf-sep { width:1px; height:18px; background:var(--border); flex-shrink:0; margin:0 4px; }
+.mf-group { display:flex; gap:4px; }
+.mf-btn { appearance:none; font-family:inherit; padding:5px 12px; border-radius:6px; border:1.5px solid var(--border); background:#fff; color:var(--text2); font-size:0.71rem; font-weight:600; cursor:pointer; transition:all 0.15s; }
+.mf-btn.active { background:var(--gray-dark); border-color:var(--gray-dark); color:#fff; }
+.modal-body { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.rate-table { width:100%; border-collapse:collapse; }
+.rate-table thead { position:sticky; top:0; z-index:1; }
+.rate-table th { background:#efefef; border-bottom:2px solid var(--border); padding:8px 16px; font-size:0.71rem; font-weight:700; color:var(--gray-dark); text-align:right; white-space:nowrap; }
+.rate-table th:first-child { text-align:center; width:100px; }
+.rate-table td { padding:7px 16px; border-bottom:1px solid var(--border2); text-align:right; font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--text); }
+.rate-table td:first-child { text-align:center; font-family:inherit; font-size:0.78rem; font-weight:600; color:var(--text2); }
+.rate-table tbody tr:hover td { background:#f6f6f6; }
+.rate-table tr.rt-highlight td { background:#e8fffd; color:var(--mint); font-weight:700; }
+.rate-table tr.rt-highlight td:first-child { color:var(--mint); }
+.rate-table tr.rt-highlight:hover td { background:#d8f8f5; }
+.modal-empty { padding:40px; text-align:center; color:var(--text3); font-size:0.85rem; }
+
 /* ══════════════════════════════════════════
    PC 레이아웃 (900px+) — 완전 재설계
    ══════════════════════════════════════════ */
@@ -331,6 +361,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   <span class="banner-label">📋 적용 고시:</span>
   <select class="banner-select" id="notice-select" aria-label="고시 선택"></select>
   <span class="banner-gov" id="banner-gov"></span>
+  <button id="rate-table-btn">📊 거리별 운임표</button>
 </div>
 
 <div class="pc-wrap">
@@ -490,6 +521,44 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 <div id="offline-badge">📵 오프라인 — 캐시된 데이터 사용 중</div>
 
 </div><!-- /pc-wrap -->
+
+<!-- 거리별 운임표 모달 -->
+<div id="rate-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title-text">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title-text">📊 거리(KM)별 안전운임표</span>
+      <span class="modal-notice" id="modal-notice-text"></span>
+      <button class="modal-close" id="modal-close-btn" aria-label="닫기">✕</button>
+    </div>
+    <div class="modal-filters">
+      <span class="mf-label">운송</span>
+      <div class="mf-group">
+        <button class="mf-btn active" data-mf-trip="왕복">왕복</button>
+        <button class="mf-btn" data-mf-trip="편도">편도</button>
+      </div>
+      <div class="mf-sep"></div>
+      <span class="mf-label">운임</span>
+      <div class="mf-group">
+        <button class="mf-btn active" data-mf-fare="위탁">안전위탁</button>
+        <button class="mf-btn" data-mf-fare="사업자">사업자간</button>
+        <button class="mf-btn" data-mf-fare="운송">안전운송</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-empty" id="modal-empty">고시 데이터 로딩 후 이용하실 수 있습니다.</div>
+      <table class="rate-table" id="rate-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>거리 (KM)</th>
+            <th>20FT (원)</th>
+            <th>40FT (원)</th>
+          </tr>
+        </thead>
+        <tbody id="rate-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 <!-- flat.js만 동기 로드 (검색용 지역 목록 294KB) — 운임 데이터는 고시 선택 시 동적 로드 -->
 <script src="flat.js?v=20260517"></script>
@@ -1157,6 +1226,128 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('offline', updateOnlineStatus);
   updateOnlineStatus();
 })();
+
+// ────────────────────────────────────────────
+// 거리별 운임표 모달
+// ────────────────────────────────────────────
+
+var modalTripType = '왕복';
+var modalFareIdx  = 0; // 0=위탁, 1=사업자, 2=운송
+
+function buildRateTable() {
+  var empty = document.getElementById('modal-empty');
+  var table = document.getElementById('rate-table');
+  var tbody = document.getElementById('rate-tbody');
+
+  if (!activeNotice || !Object.keys(TARIFF).length) {
+    empty.style.display = 'block';
+    table.style.display = 'none';
+    return;
+  }
+
+  // 고시 내 모든 항목을 순회해 거리별 운임 수집
+  var distMap = {};
+  Object.keys(TARIFF).forEach(function (key) {
+    var entry = TARIFF[key];
+    Object.keys(entry).forEach(function (portKey) {
+      var isOneWay = portKey.indexOf('편도') >= 0;
+      if (modalTripType === '왕복' && isOneWay) return;
+      if (modalTripType === '편도' && !isOneWay) return;
+      var d = entry[portKey];
+      if (!distMap[d.dist]) {
+        distMap[d.dist] = { f40: d.f40[modalFareIdx], f20: d.f20[modalFareIdx] };
+      }
+    });
+  });
+
+  var dists = Object.keys(distMap).map(Number).sort(function (a, b) { return a - b; });
+
+  if (!dists.length) {
+    empty.textContent = '해당 조건의 운임 데이터가 없습니다.';
+    empty.style.display = 'block';
+    table.style.display = 'none';
+    return;
+  }
+
+  // 현재 검색된 거리 (같은 운송 유형일 때만 강조)
+  var currentDist = (state.portData && state.type === modalTripType) ? state.portData.dist : null;
+
+  tbody.innerHTML = dists.map(function (dist) {
+    var r = distMap[dist];
+    var hl = dist === currentDist ? ' class="rt-highlight"' : '';
+    return '<tr' + hl + '>' +
+      '<td>' + dist + ' km</td>' +
+      '<td>' + Number(r.f20).toLocaleString('ko-KR') + '원</td>' +
+      '<td>' + Number(r.f40).toLocaleString('ko-KR') + '원</td>' +
+      '</tr>';
+  }).join('');
+
+  empty.style.display = 'none';
+  table.style.display = 'table';
+
+  // 현재 거리 행이 있으면 스크롤
+  setTimeout(function () {
+    var hl = tbody.querySelector('.rt-highlight');
+    if (hl) hl.scrollIntoView({ block: 'center' });
+  }, 60);
+}
+
+function openRateModal() {
+  if (!activeNotice) {
+    showInlineError('고시 데이터 로딩 후 이용하실 수 있습니다.');
+    return;
+  }
+  // 현재 앱 선택값으로 필터 동기화
+  if (state.type) modalTripType = state.type;
+  if (state.fareType) modalFareIdx = { '위탁': 0, '사업자': 1, '운송': 2 }[state.fareType];
+
+  document.querySelectorAll('[data-mf-trip]').forEach(function (btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-mf-trip') === modalTripType);
+  });
+  var fareKey = ['위탁', '사업자', '운송'][modalFareIdx];
+  document.querySelectorAll('[data-mf-fare]').forEach(function (btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-mf-fare') === fareKey);
+  });
+
+  document.getElementById('modal-notice-text').textContent = activeNotice.label;
+  buildRateTable();
+  document.getElementById('rate-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRateModal() {
+  document.getElementById('rate-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('rate-table-btn').addEventListener('click', openRateModal);
+document.getElementById('modal-close-btn').addEventListener('click', closeRateModal);
+document.getElementById('rate-modal').addEventListener('click', function (e) {
+  if (e.target === document.getElementById('rate-modal')) closeRateModal();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && document.getElementById('rate-modal').classList.contains('open')) closeRateModal();
+});
+
+document.querySelectorAll('[data-mf-trip]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    modalTripType = btn.getAttribute('data-mf-trip');
+    document.querySelectorAll('[data-mf-trip]').forEach(function (b) {
+      b.classList.toggle('active', b === btn);
+    });
+    buildRateTable();
+  });
+});
+
+document.querySelectorAll('[data-mf-fare]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    modalFareIdx = { '위탁': 0, '사업자': 1, '운송': 2 }[btn.getAttribute('data-mf-fare')];
+    document.querySelectorAll('[data-mf-fare]').forEach(function (b) {
+      b.classList.toggle('active', b === btn);
+    });
+    buildRateTable();
+  });
+});
 
 // ────────────────────────────────────────────
 // 시작
