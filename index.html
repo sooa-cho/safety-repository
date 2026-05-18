@@ -172,20 +172,51 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 #offline-badge { display:none; position:fixed; bottom:14px; left:50%; transform:translateX(-50%); background:#555; color:#fff; font-size:0.7rem; font-weight:700; padding:6px 14px; border-radius:20px; z-index:999; white-space:nowrap; box-shadow:0 2px 10px rgba(0,0,0,0.25); }
 #offline-badge.show { display:block; }
 
-/* ── PC 레이아웃 ── */
-@media (min-width:768px) {
-  body { padding-bottom:40px; }
-  .header { height:64px; padding:0 40px; }
+/* ── PC 2단 레이아웃 (900px+) ── */
+@media (min-width:900px) {
+  body { display:flex; flex-direction:column; height:100vh; min-height:0; overflow:hidden; padding-bottom:0; }
+  .header { flex-shrink:0; height:64px; padding:0 40px; }
   .sebang-logo { height:22px; }
   .header-text h1 { font-size:1.05rem; }
   .header-text p { font-size:0.65rem; }
-  .banner { padding:10px 40px; }
-  .pc-wrap { padding:0 24px; }
-  .step { margin:16px 0 0; }
-  .result-wrap { margin:16px 0 0; }
-  .sur-result { margin:10px 0 0; }
-  .note { margin:10px 0 16px; }
-  #inline-error { margin:10px 0 0; }
+  .banner { flex-shrink:0; padding:10px 40px; }
+
+  /* 2단 컨테이너 */
+  .pc-wrap {
+    flex:1; min-height:0;
+    display:flex; gap:16px;
+    padding:14px 24px;
+    max-width:1100px; width:100%; margin:0 auto;
+    overflow:hidden;
+  }
+
+  /* 좌측: STEP 1~4 + 로딩 */
+  .pc-left {
+    flex:0 0 380px;
+    display:flex; flex-direction:column; gap:10px;
+    overflow-y:auto;
+  }
+
+  /* 우측: 결과 영역 */
+  .pc-right {
+    flex:1; min-width:0;
+    display:flex; flex-direction:column; gap:10px;
+    overflow-y:auto;
+  }
+
+  /* 마진 초기화 (flex gap으로 대체) */
+  .step { margin:0; }
+  .result-wrap { margin:0; }
+  .sur-result { margin:0; }
+  .note { margin:0; }
+  #inline-error { margin:0; }
+
+  /* 할증 3열 (좌측 컬럼 폭에 맞게 압축) */
+  .sur-grid { grid-template-columns:1fr 1fr 1fr; }
+  .sur-item { min-height:52px; padding:8px 10px; }
+  .sur-name { font-size:0.73rem; }
+
+  /* 폰트/크기 */
   #search-input { font-size:1rem; }
   .tog-btn { font-size:0.9rem; padding:14px 10px; }
   .step-title { font-size:0.92rem; }
@@ -216,6 +247,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 </div>
 
 <div class="pc-wrap">
+
+<div class="pc-left">
 
 <!-- STEP 1: 목적지 검색 -->
 <div class="step" id="step1">
@@ -314,6 +347,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 <!-- 인라인 에러 -->
 <div id="inline-error"></div>
 
+</div><!-- /pc-left -->
+
+<div class="pc-right">
+
 <!-- 결과 -->
 <div id="result">
   <div class="result-wrap">
@@ -354,6 +391,8 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   </div>
   <div class="note">※ VAT 미포함 &nbsp;|&nbsp; 안전위탁: 운수사업자→화물차주 &nbsp;|&nbsp; 사업자간: 운수사업자→운수사업자 &nbsp;|&nbsp; 안전운송: 화주→운수사업자<br>※ 다중 할증: 최고 100% + 나머지 각 50% (최대 3개 합산)</div>
 </div>
+
+</div><!-- /pc-right -->
 
 <!-- 오프라인 배지 -->
 <div id="offline-badge">📵 오프라인 — 캐시된 데이터 사용 중</div>
