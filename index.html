@@ -98,6 +98,9 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .ac-match { color:var(--mint); font-weight:700; }
 .hint-text { font-size:0.7rem; color:var(--text2); margin-top:8px; line-height:1.7; }
 .hint-text b { color:var(--gray-dark); font-weight:700; }
+#road-addr-btn { margin-top:8px; width:100%; padding:10px 14px; border-radius:var(--radius-sm); border:1.5px dashed var(--border); background:var(--bg3); color:var(--text2); font-size:0.78rem; font-weight:600; font-family:inherit; cursor:pointer; text-align:center; transition:all 0.15s; }
+#road-addr-btn:hover { border-color:var(--mint); color:var(--mint); background:var(--mint-dim); }
+#road-addr-btn:disabled { opacity:0.5; cursor:not-allowed; }
 
 /* ── 토글 버튼 ── */
 .toggle-row { display:grid; gap:8px; }
@@ -222,8 +225,9 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
 .rt-panel-head:hover { background:#4d4d4d; }
 .rt-panel-arrow { font-size:0.65rem; transition:transform 0.2s; }
 .rt-panel:not(.open) .rt-panel-arrow { transform:rotate(180deg); }
-.rt-panel-body { display:block; }
+.rt-panel-body { display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; }
 .rt-panel:not(.open) .rt-panel-body { display:none; }
+.rate-table { min-width:340px; }
 /* 패널별 헤더 색상 */
 #rt-panel-base .rt-panel-head { background:var(--gray-dark); border-left:4px solid var(--mint); }
 #rt-panel-icn  .rt-panel-head { background:#1a5a8a; border-left:4px solid #4db8ff; }
@@ -290,6 +294,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
   #search-input { padding:9px 10px 9px 36px; font-size:0.93rem; }
   .search-icon { font-size:13px; left:10px; }
   .hint-text { display:none; }
+  #road-addr-btn { font-size:0.72rem; padding:7px 10px; margin-top:6px; }
 
   /* ── 8. 토글 버튼 ── */
   .tog-btn { padding:8px 6px; min-height:38px; font-size:0.82rem; }
@@ -416,6 +421,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
         <div id="ac-list"></div>
       </div>
     </div>
+    <button id="road-addr-btn" type="button">🗺 도로명 주소로 검색</button>
     <p class="hint-text">시·도 / 시·군·구 / 읍·면·동 중 <b>일부만 입력</b>해도 검색돼요<br>예) <b>부산 해운대</b> &nbsp;·&nbsp; <b>반여동</b> &nbsp;·&nbsp; <b>경주</b></p>
   </div>
 </div>
@@ -1361,8 +1367,8 @@ function buildBaseDistMap() {
       map[d.dist] = { f20: d.f20[modalFareIdx], f40: d.f40[modalFareIdx] };
     });
   });
-  // 1km: 고시 별표에 있으나 실제 지역 데이터 최솟값은 2km → 직접 추가
-  if (!map[1]) {
+  // 1km: 제2026-55호 별표에만 존재 → 해당 고시에서만 직접 삽입
+  if (!map[1] && activeNotice && activeNotice.id === '2026-02') {
     map[1] = { f20: OFFICIAL_1KM_F20[modalFareIdx], f40: OFFICIAL_1KM_F40[modalFareIdx] };
   }
   _distCache[modalFareIdx] = map;
@@ -1481,6 +1487,96 @@ document.querySelectorAll('[data-mf-fare]').forEach(function (btn) {
     });
     buildAllPanels();
   });
+});
+
+// ────────────────────────────────────────────
+// 도로명 주소 검색 (Daum 우편번호 서비스)
+// ────────────────────────────────────────────
+
+var _daumLoaded = false;
+var _daumLoading = false;
+
+function loadDaumPostcode(cb) {
+  if (_daumLoaded) { cb(); return; }
+  if (_daumLoading) { return; }
+  _daumLoading = true;
+  var s = document.createElement('script');
+  s.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+  s.onload = function () { _daumLoaded = true; _daumLoading = false; cb(); };
+  s.onerror = function () {
+    _daumLoading = false;
+    showInlineError('도로명 주소 서비스를 불러오지 못했습니다. 네트워크를 확인해 주세요.');
+  };
+  document.head.appendChild(s);
+}
+
+function openDaumPostcode() {
+  loadDaumPostcode(function () {
+    new daum.Postcode({
+      oncomplete: function (data) {
+        // data.sido, data.sigungu, data.bname(법정동), data.bname1(읍면동)
+        var sido   = data.sido   || '';
+        var sigungu = data.sigungu || '';
+        var bname  = data.bname  || '';
+
+        // 검색어: 시군구 + 법정동 (flat.js의 item.l 패턴과 일치)
+        var tokens = [sigungu, bname].filter(Boolean);
+        var flat = window.FLAT || [];
+        var results = flat.filter(function (item) {
+          return tokens.every(function (t) { return item.l.indexOf(t) >= 0; });
+        });
+
+        // sido 축약형 보정 후 재필터 (예: "서울" → "서울특별시")
+        if (!results.length && sido) {
+          results = flat.filter(function (item) {
+            return tokens.every(function (t) { return item.l.indexOf(t) >= 0; }) &&
+                   item.l.indexOf(sido) >= 0;
+          });
+        }
+
+        results = results.slice(0, 30);
+
+        if (!results.length) {
+          inp.value = [sido, sigungu, bname].filter(Boolean).join(' ');
+          showInlineError('해당 도로명 주소의 운임 지역을 찾을 수 없습니다. 동명으로 직접 검색해 보세요.');
+          return;
+        }
+
+        if (results.length === 1) {
+          // 단일 결과 → 자동 선택
+          if (state.key && state.key !== results[0].k) clearSurcharges();
+          state.key   = results[0].k;
+          state.label = results[0].l;
+          inp.value   = results[0].l;
+          hideAC();
+          setDone('sn1', 'sv1', results[0].l.split(' ').slice(-2).join(' '));
+          tryShowResult();
+        } else {
+          // 복수 결과 → 자동완성 목록 표시
+          acResults = results;
+          var q = [sigungu, bname].filter(Boolean).join(' ');
+          inp.value = q;
+          acInfo.textContent = '도로명 주소 검색 결과 ' + results.length + '건';
+          acList.innerHTML = results.map(function (item, i) {
+            var label = escapeHtml(item.l);
+            [sigungu, bname].filter(Boolean).forEach(function (t) {
+              var st = escapeHtml(t);
+              label = label.split(st).join('<span class="ac-match">' + st + '</span>');
+            });
+            return '<div class="ac-item" role="option" aria-selected="false" data-i="' + i + '">' +
+                   '<span class="ac-icon" aria-hidden="true">📍</span><span>' + label + '</span></div>';
+          }).join('');
+          showAC();
+          kbIndex = -1;
+        }
+      }
+    }).open();
+  });
+}
+
+document.getElementById('road-addr-btn').addEventListener('click', function () {
+  if (document.getElementById('search-input').disabled) return;
+  openDaumPostcode();
 });
 
 // ────────────────────────────────────────────
