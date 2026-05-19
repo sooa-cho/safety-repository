@@ -1066,7 +1066,8 @@ function applyFareHighlight() {
 
 function showResult() {
   if (!activeNotice) return;
-  const entry = TARIFF[state.key];
+  // 2026-02 이후: 파이프(|) 구분자 / 구 고시: 언더스코어(_) 구분자
+  const entry = TARIFF[state.key] || TARIFF[state.key.replace(/\|/g, '_')];
   if (!entry) {
     showInlineError('해당 지역의 데이터를 찾을 수 없습니다. 다른 지역을 검색해 주세요.');
     document.getElementById('result').style.display = 'none';
