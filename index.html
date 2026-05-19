@@ -576,12 +576,12 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
     <div class="modal-body">
       <div class="modal-empty" id="modal-empty">고시 데이터 로딩 후 이용하실 수 있습니다.</div>
 
-      <!-- 거리별 운임 (부산신항 기준) -->
+      <!-- 거리별 운임 -->
       <div class="rt-panel open" id="rt-panel-base">
         <div class="rt-panel-head" data-panel="rt-panel-base">
           <div class="rt-panel-title-wrap">
-            <span>거리(km)별 안전운임 (왕복 기준)</span>
-            <span class="rt-panel-sub" id="base-panel-sub">부산신항 기준 요율</span>
+            <span>거리(km)별 안전운임표 (왕복)</span>
+            <span class="rt-panel-sub" id="base-panel-sub"></span>
           </div>
           <span class="rt-panel-arrow">▲</span>
         </div>
@@ -593,7 +593,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); color:var(--
         </div>
       </div>
     </div>
-    <div class="modal-foot">※ 편도 구간거리 기준 · 왕복 운임 표기 · 부산신항 기준 요율 · VAT 별도</div>
+    <div class="modal-foot">※ 편도 구간거리(km) · 왕복 운임 · VAT 별도</div>
   </div>
 </div>
 
@@ -1333,8 +1333,8 @@ var _distCache = [null, null, null]; // fareIdx별 캐시
 var OFFICIAL_1KM_F40 = [125300, 135500, 146500];
 var OFFICIAL_1KM_F20 = [108500, 117600, 127400];
 
-// 부산신항 단일 기준으로 거리→요율 맵 생성
-// 구 고시(2021-09~2022-04)는 항구별로 요율이 달라 혼합 시 오류 → 부산신항 기준으로 통일
+// 고시 별표 거리(km)별 운임 맵 생성
+// 부산신항 기준 (전 고시 공통: 동일 km에서 부산신항 요율 = 고시 별표 요율)
 function buildBaseDistMap() {
   if (_distCache[modalFareIdx]) return _distCache[modalFareIdx];
   var map = {};
@@ -1364,7 +1364,7 @@ function buildAllPanels() {
 
   var fareKey = FARE_TYPES[modalFareIdx];
   document.getElementById('base-panel-sub').textContent =
-    '부산신항 기준 · ' + (FARE_LABEL_MAP[fareKey] || fareKey) + ' · 왕복 운임';
+    (FARE_LABEL_MAP[fareKey] || fareKey) + ' · 왕복 운임';
 
   var baseMap = buildBaseDistMap();
   var currentDist = (state.portData && state.type === '왕복') ? state.portData.dist : null;
