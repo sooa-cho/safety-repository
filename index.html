@@ -1367,7 +1367,12 @@ function buildAllPanels() {
     (FARE_LABEL_MAP[fareKey] || fareKey) + ' · 왕복 운임';
 
   var baseMap = buildBaseDistMap();
-  var currentDist = (state.portData && state.type === '왕복') ? state.portData.dist : null;
+  // 테이블이 부산신항 기준이므로 하이라이트도 부산신항 거리 사용
+  var currentDist = null;
+  if (state.entry && state.type === '왕복') {
+    var _bs = state.entry['부산신항'];
+    if (_bs) currentDist = _bs.dist;
+  }
   var dists = Object.keys(baseMap).map(Number).sort(function (a, b) { return a - b; });
   var tbody = document.getElementById('tbody-base');
   if (!dists.length) {
