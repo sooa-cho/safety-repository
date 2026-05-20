@@ -893,9 +893,17 @@ inp.addEventListener('input', function () {
     if (!q) { hideAC(); return; }
     const tokens = q.split(/\s+/).filter(Boolean);
     const flat = window.FLAT || [];
-    acResults = flat.filter(function (item) {
+    var matched = flat.filter(function (item) {
       return tokens.every(function (t) { return item.l.indexOf(t) >= 0; });
-    }).slice(0, 30);
+    });
+    // 고시 데이터가 로드된 경우 현재 TARIFF에 운임 데이터가 있는 지역만 표시
+    if (tariffLoaded && matched.length) {
+      var withData = matched.filter(function (item) {
+        return TARIFF[item.k] || TARIFF[normalizeKeyForOldNotice(item.k)];
+      });
+      if (withData.length) matched = withData;
+    }
+    acResults = matched.slice(0, 30);
     if (!acResults.length) { hideAC(); return; }
     acInfo.textContent = '검색 결과 ' + acResults.length + '건';
     acList.innerHTML = acResults.map(function (item, i) {
@@ -1548,6 +1556,13 @@ function mapDaumToTariff(data) {
     results = flat.filter(function (item) { return item.l.indexOf(dong) >= 0; });
   }
 
+  // 고시 데이터가 로드된 경우 현재 TARIFF에 운임 데이터가 있는 지역만 표시
+  if (tariffLoaded && results.length) {
+    var withData = results.filter(function (item) {
+      return TARIFF[item.k] || TARIFF[normalizeKeyForOldNotice(item.k)];
+    });
+    if (withData.length) results = withData;
+  }
   results = results.slice(0, 30);
 
   // 도로명 선택 후 행정동 모드로 복귀
