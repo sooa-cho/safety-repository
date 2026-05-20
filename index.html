@@ -1089,6 +1089,11 @@ function normalizeKeyForOldNotice(flatKey) {
     .replace('전북특별자치도|', '전라북도|')
     .replace('인천광역시|미추홀구|', '인천광역시|남구|')
     .replace(/\|/g, '_');
+  // FLAT의 "고양시 덕양구" 형태(시+구 사이 공백) → 구 TARIFF의 "고양시_덕양구" 형태
+  k = k.replace(/_([가-힣]+시) ([가-힣]+구)_/g, function(_, city, gu) { return '_' + city + '_' + gu + '_'; });
+  // 창원시 마산합포구/마산회원구: FLAT에서는 붙여쓰기, 구 TARIFF에서는 분리
+  k = k.replace('창원시마산합포구_', '창원시_마산합포구_');
+  k = k.replace('창원시마산회원구_', '창원시_마산회원구_');
   return k;
 }
 
