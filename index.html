@@ -897,9 +897,15 @@ inp.addEventListener('input', function () {
       return tokens.every(function (t) { return item.l.indexOf(t) >= 0; });
     });
     // 고시 데이터가 로드된 경우 현재 TARIFF에 운임 데이터가 있는 지역만 표시
+    // 운송 유형(왕복/편도)이 선택된 경우 해당 유형의 기점이 있는 지역만 표시
     if (tariffLoaded && matched.length) {
       var withData = matched.filter(function (item) {
-        return TARIFF[item.k] || TARIFF[normalizeKeyForOldNotice(item.k)];
+        var tk = TARIFF[item.k] ? item.k : (TARIFF[normalizeKeyForOldNotice(item.k)] ? normalizeKeyForOldNotice(item.k) : null);
+        if (!tk) return false;
+        if (!state.type) return true;
+        return Object.keys(TARIFF[tk]).some(function (p) {
+          return state.type === '왕복' ? p.indexOf('편도') < 0 : p.indexOf('편도') >= 0;
+        });
       });
       if (withData.length) matched = withData;
     }
@@ -1110,7 +1116,17 @@ function showResult() {
   const ports = Object.keys(entry).filter(filterFn);
 
   if (!ports.length) {
-    showInlineError('편도 운임은 수도권 화주공장에서 의왕ICD 반납·수령 시만 적용됩니다.');
+    var otherFn = state.type === '왕복'
+      ? function (k) { return k.indexOf('편도') >= 0; }
+      : function (k) { return k.indexOf('편도') < 0; };
+    var hasCross = Object.keys(entry).some(otherFn);
+    if (hasCross) {
+      showInlineError(state.type === '왕복'
+        ? '이 목적지는 편도(의왕ICD) 운임만 있습니다. 운송 유형을 \'편도(의왕ICD)\'로 선택해 주세요.'
+        : '이 목적지는 왕복 운임만 있습니다. 운송 유형을 \'왕복\'으로 선택해 주세요.');
+    } else {
+      showInlineError('편도 운임은 수도권 화주공장에서 의왕ICD 반납·수령 시만 적용됩니다.');
+    }
     document.getElementById('result').style.display = 'none';
     return;
   }
@@ -1557,9 +1573,15 @@ function mapDaumToTariff(data) {
   }
 
   // 고시 데이터가 로드된 경우 현재 TARIFF에 운임 데이터가 있는 지역만 표시
+  // 운송 유형(왕복/편도)이 선택된 경우 해당 유형의 기점이 있는 지역만 표시
   if (tariffLoaded && results.length) {
     var withData = results.filter(function (item) {
-      return TARIFF[item.k] || TARIFF[normalizeKeyForOldNotice(item.k)];
+      var tk = TARIFF[item.k] ? item.k : (TARIFF[normalizeKeyForOldNotice(item.k)] ? normalizeKeyForOldNotice(item.k) : null);
+      if (!tk) return false;
+      if (!state.type) return true;
+      return Object.keys(TARIFF[tk]).some(function (p) {
+        return state.type === '왕복' ? p.indexOf('편도') < 0 : p.indexOf('편도') >= 0;
+      });
     });
     if (withData.length) results = withData;
   }
