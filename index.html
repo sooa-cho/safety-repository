@@ -21,6 +21,8 @@
   gtag('js', new Date());
   gtag('config', 'G-5D5CQQX1DJ');
 </script>
+<!-- 카카오 주소 API -->
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b8cdcc306a177e725cff5745e675a432&libraries=services"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1539,58 +1541,12 @@ function openDaumEmbed() {
 }
 
 function mapDaumToTariff(data) {
-  // 반환 필드: sido(시도 약칭), sigungu(시군구), bname(법정동/리), bname1(읍면), bname2(동리)
-  var sigungu = data.sigungu || '';
-  var dong    = data.bname   || data.bname2 || '';
-  var eup     = data.bname1  || ''; // 읍/면 (해당 시에만 존재)
-
-  var flat = window.FLAT || [];
-  var results = [];
-
-  // 전략 1: 시군구 + 법정동/리
-  if (sigungu && dong) {
-    // 시군구에 공백이 있으면(예: "성남시 분당구") 각각 토큰으로 검색
-    var guTokens = sigungu.split(' ').filter(Boolean);
-    results = flat.filter(function (item) {
-      return guTokens.every(function (t) { return item.l.indexOf(t) >= 0; }) &&
-             item.l.indexOf(dong) >= 0;
-    });
+  // 카카오 지오코딩 API로 도로명 주소 → 행정동 자동 변환
+  var fullAddr = data.roadAddress || data.jibunAddress || '';
+  if (!fullAddr) {
+    showInlineError('주소 정보를 가져올 수 없습니다.');
+    return;
   }
-
-  // 전략 2: 읍/면이 있는 경우 읍면 + 동/리
-  if (!results.length && eup && dong) {
-    results = flat.filter(function (item) {
-      return item.l.indexOf(eup) >= 0 && item.l.indexOf(dong) >= 0;
-    });
-  }
-
-  // 전략 3: 시군구만으로 (읍면동 정보가 없을 때)
-  if (!results.length && sigungu) {
-    var guTokens2 = sigungu.split(' ').filter(Boolean);
-    results = flat.filter(function (item) {
-      return guTokens2.every(function (t) { return item.l.indexOf(t) >= 0; });
-    });
-  }
-
-  // 전략 4: 동/리 이름만 (더 넓게)
-  if (!results.length && dong) {
-    results = flat.filter(function (item) { return item.l.indexOf(dong) >= 0; });
-  }
-
-  // 고시 데이터가 로드된 경우 현재 TARIFF에 운임 데이터가 있는 지역만 표시
-  // 운송 유형(왕복/편도)이 선택된 경우 해당 유형의 기점이 있는 지역만 표시
-  if (tariffLoaded && results.length) {
-    var withData = results.filter(function (item) {
-      var tk = TARIFF[item.k] ? item.k : (TARIFF[normalizeKeyForOldNotice(item.k)] ? normalizeKeyForOldNotice(item.k) : null);
-      if (!tk) return false;
-      if (!state.type) return true;
-      return Object.keys(TARIFF[tk]).some(function (p) {
-        return state.type === '왕복' ? p.indexOf('편도') < 0 : p.indexOf('편도') >= 0;
-      });
-    });
-    if (withData.length) results = withData;
-  }
-  results = results.slice(0, 30);
 
   // 도로명 선택 후 행정동 모드로 복귀
   searchMode = 'dong';
@@ -1599,9 +1555,137 @@ function mapDaumToTariff(data) {
   document.getElementById('smt-dong').classList.add('active');
   document.getElementById('smt-road').classList.remove('active');
 
+  // 입력창에 도로명 주소 임시 표시
+  inp.value = fullAddr;
+
+  // 카카오 지오코딩으로 행정동 조회
+  if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
+    var geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch(fullAddr, function(result, status) {
+      if (status === kakao.maps.services.Status.OK && result.length > 0) {
+        var addr = result[0].address;
+        // 행정동 추출
+        var sido     = addr.region_1depth_name || '';
+        var sigungu  = addr.region_2depth_name || '';
+        var dongName = addr.region_3depth_h_name || addr.region_3depth_name || '';
+
+        resolveAdminDong(sido, sigungu, dongName, fullAddr, data);
+      } else {
+        // 지오코딩 실패 → 기존 방식으로 폴백
+        fallbackMapDaum(data);
+      }
+    });
+  } else {
+    // 카카오 API 미로드 → 기존 방식으로 폴백
+    fallbackMapDaum(data);
+  }
+}
+
+function resolveAdminDong(sido, sigungu, dongName, fullAddr, daumData) {
+  var flat = window.FLAT || [];
+
+  // 행정동 이름으로 flat.js에서 정확히 매핑
+  var results = [];
+
+  // 전략 1: 시도 + 시군구 + 행정동 (가장 정확)
+  if (sido && sigungu && dongName) {
+    results = flat.filter(function(item) {
+      return item.l.indexOf(sigungu) >= 0 && item.l.indexOf(dongName) >= 0;
+    });
+  }
+
+  // 전략 2: 시군구 + 행정동
+  if (!results.length && sigungu && dongName) {
+    var guTokens = sigungu.split(' ').filter(Boolean);
+    results = flat.filter(function(item) {
+      return guTokens.every(function(t) { return item.l.indexOf(t) >= 0; }) &&
+             item.l.indexOf(dongName) >= 0;
+    });
+  }
+
+  // 전략 3: 행정동만
+  if (!results.length && dongName) {
+    results = flat.filter(function(item) { return item.l.indexOf(dongName) >= 0; });
+  }
+
+  // 운임 데이터 필터링
+  if (tariffLoaded && results.length) {
+    var withData = results.filter(function(item) {
+      var tk = TARIFF[item.k] ? item.k : (TARIFF[normalizeKeyForOldNotice(item.k)] ? normalizeKeyForOldNotice(item.k) : null);
+      if (!tk) return false;
+      if (!state.type) return true;
+      return Object.keys(TARIFF[tk]).some(function(p) {
+        return state.type === '왕복' ? p.indexOf('편도') < 0 : p.indexOf('편도') >= 0;
+      });
+    });
+    if (withData.length) results = withData;
+  }
+
+  results = results.slice(0, 30);
+
   if (!results.length) {
     inp.value = '';
     showInlineError('해당 도로명 주소의 운임 지역을 찾을 수 없습니다. 동 이름으로 직접 검색해 보세요.');
+    return;
+  }
+
+  // 1개면 바로 선택 → 운임 표시
+  if (results.length === 1) {
+    acResults = results;
+    selectItem(0);
+    return;
+  }
+
+  // 동 이름이 완전히 일치하는 게 하나면 바로 선택
+  var exact = results.filter(function(item) {
+    return item.l.split(' ').pop() === dongName;
+  });
+  if (exact.length === 1) {
+    acResults = exact;
+    selectItem(0);
+    return;
+  }
+
+  // 복수 결과 → 목록 표시
+  acResults = results;
+  inp.value = [sigungu, dongName].filter(Boolean).join(' ');
+  acInfo.textContent = '행정동을 선택해 주세요 (' + results.length + '건)';
+  acInfo.className = '';
+  acList.innerHTML = results.map(function(item, idx) {
+    var label = escapeHtml(item.l);
+    [dongName, sigungu].filter(Boolean).forEach(function(t) {
+      var st = escapeHtml(t);
+      label = label.split(st).join('<span class="ac-match">' + st + '</span>');
+    });
+    return '<div class="ac-item" role="option" aria-selected="false" data-i="' + idx + '">' +
+           '<span class="ac-icon" aria-hidden="true">📍</span><span>' + label + '</span></div>';
+  }).join('');
+  showAC();
+  kbIndex = -1;
+}
+
+// 카카오 API 실패 시 기존 방식 폴백
+function fallbackMapDaum(data) {
+  var sigungu = data.sigungu || '';
+  var dong    = data.bname   || data.bname2 || '';
+  var flat    = window.FLAT || [];
+  var results = [];
+
+  if (sigungu && dong) {
+    var guTokens = sigungu.split(' ').filter(Boolean);
+    results = flat.filter(function(item) {
+      return guTokens.every(function(t) { return item.l.indexOf(t) >= 0; }) &&
+             item.l.indexOf(dong) >= 0;
+    });
+  }
+  if (!results.length && dong) {
+    results = flat.filter(function(item) { return item.l.indexOf(dong) >= 0; });
+  }
+  results = results.slice(0, 30);
+
+  if (!results.length) {
+    inp.value = '';
+    showInlineError('해당 주소의 운임 지역을 찾을 수 없습니다. 동 이름으로 직접 검색해 보세요.');
     return;
   }
 
@@ -1609,19 +1693,11 @@ function mapDaumToTariff(data) {
     acResults = results;
     selectItem(0);
   } else {
-    // 복수 결과 → 기존 자동완성 목록으로 표시
     acResults = results;
-    var q = [sigungu, dong].filter(Boolean).join(' ');
-    inp.value = q;
-    var highlightTokens = [dong, sigungu].filter(Boolean);
-    acInfo.textContent = '도로명 주소 검색 결과 ' + results.length + '건 — 해당 동을 선택해 주세요';
+    acInfo.textContent = '행정동을 선택해 주세요 (' + results.length + '건)';
     acInfo.className = '';
-    acList.innerHTML = results.map(function (item, idx) {
+    acList.innerHTML = results.map(function(item, idx) {
       var label = escapeHtml(item.l);
-      highlightTokens.forEach(function (t) {
-        var st = escapeHtml(t);
-        label = label.split(st).join('<span class="ac-match">' + st + '</span>');
-      });
       return '<div class="ac-item" role="option" aria-selected="false" data-i="' + idx + '">' +
              '<span class="ac-icon" aria-hidden="true">📍</span><span>' + label + '</span></div>';
     }).join('');
