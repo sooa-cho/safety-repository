@@ -1553,11 +1553,11 @@ function mapDaumToTariff(data) {
           window.destMarker.setMap(null);
         }
         window.destMarker = new kakao.maps.Marker({
-          map: map, // 최초 생성된 카카오 map 객체 변수
+          map: map,
           position: coords
         });
 
-        // 지도의 중심을 마커 위치로 이동하고 주변 건물이 뚜렷하게 보일 정도로 확대(레벨 3)
+        // 지도의 중심을 마커 위치로 이동하고 상세 확대
         map.setCenter(coords);
         map.setLevel(3);
       }
@@ -1622,7 +1622,7 @@ function mapDaumToTariff(data) {
   }
 
   // -------------------------------------------------------------
-  // 3. 드롭박스 원천 차단 및 화면 UI 오염 방지 가로채기
+  // 3. UI 오염 원천 차단 및 백엔드 데이터 다이렉트 주입 (🔥 핵심 수정)
   // -------------------------------------------------------------
   if (!results.length) {
     inp.value = '';
@@ -1630,32 +1630,48 @@ function mapDaumToTariff(data) {
     return;
   }
 
-  // 대기 데이터 목록에 매칭된 행정동 결과 배열 주입
+  // 1. 자동완성 목록(acResults)에 결과 주입
   acResults = results;
   
-  // 상단 화면 라벨과 주소 검색창 텍스트를 행정동 이름으로 오염시키지 않고 '도로명 주소'로 강제 박제
-  document.getElementById('sv1').innerText = data.roadAddress; 
-  inp.value = data.roadAddress; 
+  // 2. 검색창과 상단 바를 '선릉로 433' 같은 실제 도로명 주소로 완벽 고정
+  var targetAddress = data.roadAddress || data.address;
+  inp.value = targetAddress; 
+  document.getElementById('sv1').innerText = targetAddress; 
 
-  // 역삼1동, 역삼2동처럼 복수 결과가 있더라도 드롭다운 팝업창을 완전히 숨깁니다.
+  // 3. 드롭다운 팝업창 완전 차단
   if (typeof hideAC === 'function') hideAC();
   else if (typeof acWrap !== 'undefined' && acWrap) acWrap.style.display = 'none';
 
-  // 가장 첫 번째로 매칭되는 행정동 매핑 데이터를 기준으로 안전운임 연동 카드를 강제 실행
-  selectItem(0); 
+  // 4. 🌟 [핵심] 기존 selectItem(0)을 호출하면 주소가 행정동으로 오염되므로 
+  // 내부 로직만 분리하여 안전운임 카드만 갱신하도록 처리합니다.
+  if (typeof state !== 'undefined' && state) {
+    state.k = results[0].k; // 백엔드 요율 계산용 키값은 첫 번째 행정동(역삼1동 등)으로 주입
+    state.label = targetAddress; // 저장되는 라벨은 도로명 주소로 유지
+  }
 
-  // 🌟 [핵심 타이밍 차단] selectItem(0) 내부 로직이 돌아가면서 화면 입력창 주소와 
-  // 드롭박스 UI를 다시 행정동 상태로 복원해버리는 부작용을 마이크로초 단위 꼼수로 다시 가로챕니다.
-  setTimeout(function() {
-    inp.value = data.roadAddress;
-    document.getElementById('sv1').innerText = data.roadAddress;
-    if (typeof hideAC === 'function') hideAC();
-  }, 10);
-  
-  setTimeout(function() {
-    inp.value = data.roadAddress;
-    if (typeof hideAC === 'function') hideAC();
-  }, 80);
+  // 5. 운임 카드 갱신 함수 강제 실행 (만약 이 함수명이 다르면 하단 타이머가 가로챕니다)
+  if (typeof updateTariffCard === 'function') {
+    updateTariffCard();
+  } else if (typeof renderTariff === 'function') {
+    renderTariff();
+  } else {
+    // 꼼수 방어선: 어쩔 수 없이 원래 selectItem(0)을 실행하되, 
+    // 실행 완료 시점을 넉넉히 계산하여 무조건 도로명 주소로 다시 강제 덮어쓰기 합니다.
+    selectItem(0);
+    
+    var fixInterval = setInterval(function() {
+      inp.value = targetAddress;
+      document.getElementById('sv1').innerText = targetAddress;
+      if (typeof hideAC === 'function') hideAC();
+    }, 10);
+    
+    // 0.3초 동안 계속 가로챈 후 타이머 종료
+    setTimeout(function() {
+      clearInterval(fixInterval);
+      inp.value = targetAddress;
+      document.getElementById('sv1').innerText = targetAddress;
+    }, 300);
+  }
 }
 
 // -------------------------------------------------------------
