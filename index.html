@@ -1638,15 +1638,11 @@ function mapDaumToTariff(data) {
   }
 
   // -------------------------------------------------------------
-  // 3. UI 제어 및 결과 표출 (🔥 핵심 수정 구간)
+  // 3. UI 제어 및 결과 표출 (🔥 우회 로직 강화)
   // -------------------------------------------------------------
-  searchMode = 'dong';
-  inp.readOnly = false;
-  inp.placeholder = '예) 해운대, 반여동, 경주시...';
-  document.getElementById('smt-dong').classList.add('active');
-  document.getElementById('smt-road').classList.remove('active');
+  // ❌ 원래 있던 searchMode = 'dong'; 코드를 지웠습니다! 
+  // 도로명 모드('road') 상태를 그대로 유지해야 selectItem() 내부에서 드롭박스를 강제로 재호출하지 않습니다.
   
-  // 검색창에 입력한 도로명 주소를 온전히 고정합니다.
   inp.value = data.roadAddress; 
 
   if (!results.length) {
@@ -1655,39 +1651,50 @@ function mapDaumToTariff(data) {
     return;
   }
 
-  // 🌟 [우회 로직] 사용자가 도로명 주소 서비스로 유입된 경우, 
-  // 매칭된 행정동이 여러 개(역삼1동, 역삼2동 등) 있더라도 드롭박스를 띄우지 않고 
-  // 첫 번째 행정동 요율을 자동으로 지정하여 운임 화면을 바로 쏩니다!
+  // 데이터 강제 세팅 및 화면 갱신
   acResults = results;
-  document.getElementById('sv1').innerText = data.roadAddress; // 상단 헤더에 도로명 주소 강제 노출
+  document.getElementById('sv1').innerText = data.roadAddress; 
   
-  // 드롭다운 숨기기
-  if (typeof hideAC === 'function') {
-    hideAC();
-  } else if (acWrap) {
-    acWrap.style.display = 'none';
-  }
-
-  // 첫 번째 매칭 구역(0번 인덱스)으로 강제 선택 처리하여 결과 즉시 호출
+  // 첫 번째 매칭 구역(0번 인덱스) 강제 선택
   selectItem(0); 
+
+  // 🌟 selectItem(0)이 실행되면서 드롭다운을 다시 열어버리는 부작용을 원천 차단하기 위해 
+  // 모든 연산이 완벽히 끝난 최종 시점에 드롭박스를 한 번 더 확실하게 닫아줍니다.
+  setTimeout(function() {
+    if (typeof hideAC === 'function') {
+      hideAC();
+    } else if (typeof acWrap !== 'undefined' && acWrap) {
+      acWrap.style.display = 'none';
+    }
+  }, 50);
 }
 
+// -------------------------------------------------------------
+// 4. 검색 모드 전환 제어 함수
+// -------------------------------------------------------------
 function setSearchMode(mode) {
   searchMode = mode;
   document.getElementById('smt-dong').classList.toggle('active', mode === 'dong');
   document.getElementById('smt-road').classList.toggle('active', mode === 'road');
-  hideAC();
+  
+  if (typeof hideAC === 'function') {
+    hideAC();
+  } else if (typeof acWrap !== 'undefined' && acWrap) {
+    acWrap.style.display = 'none';
+  }
   _daumEmbedOpen = false;
 
   if (mode === 'dong') {
     inp.readOnly = false;
     inp.placeholder = '예) 해운대, 반여동, 경주시...';
-    inp.value = state.label || '';
+    inp.value = (typeof state !== 'undefined' && state && state.label) ? state.label : '';
     if (!('ontouchstart' in window)) inp.focus();
   } else {
+    // 도로명 주소 모드일 때
     inp.readOnly = true;
     inp.placeholder = '클릭하여 도로명 주소 검색';
     inp.value = '';
+    
     // 도로명 모드 전환 시 바로 Daum 팝업 열기
     loadDaumPostcode(function () {
       new daum.Postcode({
