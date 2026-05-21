@@ -1530,9 +1530,9 @@ function openDaumPopup() {
   });
 }
 
-// Daum 결과 → flat.js 행정동 매핑 → 운임 표시 + [추가] 카카오 지도 도로명 정밀 매핑
+// Daum 결과 → flat.js 행정동 매핑 → 운임 표시 + [정밀 우회] 카카오 지도 도로명 정밀 매핑
 function mapDaumToTariff(data) {
-  // 🌟 [추가 로직] 사용자가 선택한 실제 도로명 주소 그대로 카카오 지도에 정밀 마커 표시
+  // 🌟 1. 사용자가 선택한 실제 도로명 주소 그대로 카카오 지도에 정밀 마커 표시
   if (typeof kakao !== 'undefined' && kakao.maps && kakao.maps.services) {
     var geocoder = new kakao.maps.services.Geocoder();
     
@@ -1540,29 +1540,29 @@ function mapDaumToTariff(data) {
       if (status === kakao.maps.services.Status.OK) {
         var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-        // 1. 기존에 그려져 있던 행정동 폴리곤(면) 제거
+        // 기존에 그려져 있던 행정동 폴리곤(면) 제거
         if (window.currentPolygon) {
           window.currentPolygon.setMap(null);
         }
 
-        // 2. 목적지 정확한 건물 위치에 마커 표시
+        // 목적지 정확한 건물 위치에 마커 표시
         if (window.destMarker) {
           window.destMarker.setMap(null);
         }
         window.destMarker = new kakao.maps.Marker({
-          map: map, // 기존 생성된 카카오 map 객체 변수명
+          map: map,
           position: coords
         });
 
-        // 3. 지도 중심 이동 및 상세 확대
+        // 지도 중심 이동 및 상세 확대
         map.setCenter(coords);
-        map.setLevel(3); // 도로명 위치가 뚜렷이 보일 정도로 줌인
+        map.setLevel(3);
       }
     });
   }
 
   // -------------------------------------------------------------
-  // 하단은 기존 안전운임 매핑 및 자동완성 검색 기능 (그대로 유지하며 UI 조율)
+  // 2. 안전운임 행정동 매핑 데이터 필터링 엔진
   // -------------------------------------------------------------
   var sido     = data.sido     || '';
   var sigungu  = data.sigungu  || '';
@@ -1612,7 +1612,7 @@ function mapDaumToTariff(data) {
     });
   }
 
-  // 전략 4: sido + sigungu 전체 (최후 수단 → 사용자가 선택)
+  // 전략 4: sido + sigungu 전체
   if (!results.length && sidoFull && sigungu) {
     results = flat.filter(function (item) {
       return item.l.indexOf(sidoFull) >= 0 &&
@@ -1620,7 +1620,7 @@ function mapDaumToTariff(data) {
     });
   }
 
-  // 전략 5: sigungu + dong (sido 매핑 실패 시)
+  // 전략 5: sigungu + dong
   if (!results.length && sigungu && dong) {
     var guTokens = sigungu.split(' ').filter(Boolean);
     results = flat.filter(function (item) {
@@ -1637,14 +1637,16 @@ function mapDaumToTariff(data) {
     if (withData.length) results = withData;
   }
 
-  // 행정동 모드로 전환하되 화면 표시는 사용자가 선택한 실제 도로명 주소로 세팅
+  // -------------------------------------------------------------
+  // 3. UI 제어 및 결과 표출 (🔥 핵심 수정 구간)
+  // -------------------------------------------------------------
   searchMode = 'dong';
   inp.readOnly = false;
   inp.placeholder = '예) 해운대, 반여동, 경주시...';
   document.getElementById('smt-dong').classList.add('active');
   document.getElementById('smt-road').classList.remove('active');
   
-  // 🌟 [수정] 검색창에 엉뚱한 행정동 텍스트가 들어가서 밀리는 대신, 도로명 주소를 박아줍니다.
+  // 검색창에 입력한 도로명 주소를 온전히 고정합니다.
   inp.value = data.roadAddress; 
 
   if (!results.length) {
@@ -1653,30 +1655,21 @@ function mapDaumToTariff(data) {
     return;
   }
 
-  // 결과 1개 → 바로 운임 표시 연동
-  if (results.length === 1) {
-    acResults = results;
-    // 🌟 [수정] 결과가 확정되었을 때도 상단 완료 라벨 영역(sv1)에 실제 도로명 주소가 남아있게 바꿉니다.
-    document.getElementById('sv1').innerText = data.roadAddress; 
-    selectItem(0);
-    return;
+  // 🌟 [우회 로직] 사용자가 도로명 주소 서비스로 유입된 경우, 
+  // 매칭된 행정동이 여러 개(역삼1동, 역삼2동 등) 있더라도 드롭박스를 띄우지 않고 
+  // 첫 번째 행정동 요율을 자동으로 지정하여 운임 화면을 바로 쏩니다!
+  acResults = results;
+  document.getElementById('sv1').innerText = data.roadAddress; // 상단 헤더에 도로명 주소 강제 노출
+  
+  // 드롭다운 숨기기
+  if (typeof hideAC === 'function') {
+    hideAC();
+  } else if (acWrap) {
+    acWrap.style.display = 'none';
   }
 
-  // 복수 결과 → 행정동 드롭다운 (운임 고시 구역 매핑용 선택창 활성화)
-  acResults = results;
-  var baseDong2 = dong.replace(/[0-9]/g, '').replace(/[동리]$/, '').trim();
-  acInfo.textContent = '운임 계산을 위해 세부 행정동을 선택해 주세요 (' + results.length + '건)';
-  acList.innerHTML = results.map(function (item, i) {
-    var label = escapeHtml(item.l);
-    [baseDong2, sigungu, sidoFull].filter(function(t){ return t && t.length >= 2; }).forEach(function (t) {
-      var st = escapeHtml(t);
-      label = label.split(st).join('<span class="ac-match">' + st + '</span>');
-    });
-    return '<div class="ac-item" role="option" aria-selected="false" data-i="' + i + '">' +
-      '<span class="ac-icon" aria-hidden="true">📍</span><span>' + label + '</span></div>';
-  }).join('');
-  showAC();
-  kbIndex = -1;
+  // 첫 번째 매칭 구역(0번 인덱스)으로 강제 선택 처리하여 결과 즉시 호출
+  selectItem(0); 
 }
 
 function setSearchMode(mode) {
