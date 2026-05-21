@@ -22,7 +22,7 @@
   gtag('config', 'G-5D5CQQX1DJ');
 </script>
 <!-- 카카오 주소 검색 API -->
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b8cdcc306a177e725cff5745e675a432&libraries=services"></script>
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b8cdcc306a177e725cff5745e675a432&libraries=services&autoload=false"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1518,9 +1518,23 @@ document.querySelectorAll('[data-mf-fare]').forEach(function (btn) {
 // ────────────────────────────────────────────
 
 var _roadResults = [];
+var _kakaoReady = false;
+
+// 카카오 SDK 초기화
+function _initKakao(cb) {
+  if (_kakaoReady) { cb(); return; }
+  if (!window.kakao || !window.kakao.maps) {
+    showInlineError('주소 검색 서비스를 불러오지 못했습니다. 새로고침 후 다시 시도해 주세요.');
+    return;
+  }
+  kakao.maps.load(function() {
+    _kakaoReady = true;
+    cb();
+  });
+}
 
 function searchRoadAddress(q) {
-  if (!window.kakao || !window.kakao.maps || !window.kakao.maps.services) {
+  if (!window.kakao || !window.kakao.maps) {
     showInlineError('주소 검색 서비스 로딩 중입니다. 잠시 후 다시 시도해 주세요.');
     return;
   }
@@ -1529,50 +1543,50 @@ function searchRoadAddress(q) {
   acList.innerHTML = '<div style="padding:12px;text-align:center;color:var(--text3);font-size:0.8rem;">검색 중...</div>';
   showAC();
 
-  var geocoder = new kakao.maps.services.Geocoder();
+  _initKakao(function() {
+    var geocoder = new kakao.maps.services.Geocoder();
 
-  // 1차: roadAddressSearch (도로명 전용)
-  geocoder.addressSearch(q, function(result, status) {
-    if (status === kakao.maps.services.Status.OK && result.length > 0) {
-      _buildRoadResults(result, q);
-    } else {
-      // 2차: keywordSearch 폴백 (도로명+번지 못 찾을 경우)
-      var ps = new kakao.maps.services.Places();
-      ps.keywordSearch(q, function(kResult, kStatus) {
-        if (kStatus === kakao.maps.services.Status.OK && kResult.length > 0) {
-          // keywordSearch 결과를 geocoder로 좌표→주소 변환
-          var firstPlace = kResult[0];
-          geocoder.coord2Address(firstPlace.x, firstPlace.y, function(aResult, aStatus) {
-            if (aStatus === kakao.maps.services.Status.OK && aResult.length > 0) {
-              _buildRoadResults(aResult.map(function(a) {
-                return {
-                  road_address: a.road_address,
-                  address: a.address
-                };
-              }), q);
-            } else {
-              _showNoResult();
-            }
-          });
-        } else {
-          _showNoResult();
-        }
-      }, { category_group_code: '' });
-    }
+    // 1차: addressSearch (도로명+지번 통합)
+    geocoder.addressSearch(q, function(result, status) {
+      if (status === kakao.maps.services.Status.OK && result.length > 0) {
+        _buildRoadResults(result, q);
+      } else {
+        // 2차: keywordSearch 폴백
+        var ps = new kakao.maps.services.Places();
+        ps.keywordSearch(q, function(kResult, kStatus) {
+          if (kStatus === kakao.maps.services.Status.OK && kResult.length > 0) {
+            geocoder.coord2Address(
+              parseFloat(kResult[0].x),
+              parseFloat(kResult[0].y),
+              function(aResult, aStatus) {
+                if (aStatus === kakao.maps.services.Status.OK && aResult.length > 0) {
+                  _buildRoadResults(aResult, q);
+                } else {
+                  _showNoResult();
+                }
+              }
+            );
+          } else {
+            _showNoResult();
+          }
+        });
+      }
+    });
   });
 }
 
 function _buildRoadResults(result, q) {
   _roadResults = result.map(function(r) {
+    // addressSearch 결과: r.road_address, r.address
+    // coord2Address 결과: r.road_address, r.address (동일 구조)
     var ra = r.road_address || null;
     var ja = r.address      || null;
     return {
       road:    ra ? ra.address_name  : (ja ? ja.address_name : ''),
-      sido:    ja ? ja.region_1depth_name : (ra ? ra.region_1depth_name : ''),
       sigungu: ja ? ja.region_2depth_name : (ra ? ra.region_2depth_name : ''),
-      dong:    ja ? (ja.region_3depth_h_name || ja.region_3depth_name) : (ra ? ra.region_3depth_name : ''),
+      dong:    ja ? (ja.region_3depth_h_name || ja.region_3depth_name) : '',
     };
-  }).filter(function(r) { return r.road || r.dong; });
+  }).filter(function(r) { return r.dong || r.road; });
 
   // 중복 dong 제거
   var seen = {};
@@ -1585,13 +1599,13 @@ function _buildRoadResults(result, q) {
 
   if (!_roadResults.length) { _showNoResult(); return; }
 
-  // 결과 1개 → 바로 행정동 후보로 연결
+  // 결과 1개 → 바로 행정동 후보 연결
   if (_roadResults.length === 1) {
     resolveRoadToTariff(_roadResults[0]);
     return;
   }
 
-  // 복수 → 도로명 주소 드롭다운
+  // 복수 → 도로명 드롭다운
   _renderRoadAC(q);
 }
 
