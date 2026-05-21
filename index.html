@@ -881,7 +881,11 @@ const acWrap = document.getElementById('ac-wrap');
 const acList = document.getElementById('ac-list');
 const acInfo = document.getElementById('ac-info');
 
-function showAC() { acWrap.style.display = 'block'; inp.classList.add('ac-open'); }
+function showAC() {
+  acWrap.style.display = 'block';
+  inp.classList.add('ac-open');
+  acList.scrollTop = 0; // 새 검색 결과마다 맨 위로
+}
 function hideAC() { acWrap.style.display = 'none'; inp.classList.remove('ac-open'); }
 
 let searchMode = 'dong'; // 'dong' | 'road'
@@ -1458,6 +1462,9 @@ function openRateModal() {
   buildAllPanels();
   document.getElementById('rate-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
+  // 열 때마다 스크롤 맨 위로
+  var modalBody = document.querySelector('.modal-body');
+  if (modalBody) modalBody.scrollTop = 0;
 }
 
 function closeRateModal() {
@@ -1591,6 +1598,7 @@ function mapDaumToTariff(data) {
   inp.placeholder = '예) 해운대, 반여동, 경주시...';
   document.getElementById('smt-dong').classList.add('active');
   document.getElementById('smt-road').classList.remove('active');
+  inp.value = ''; // 도로명 주소 지우고 깨끗하게 시작
 
   if (!results.length) {
     inp.value = '';
