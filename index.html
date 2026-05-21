@@ -950,20 +950,16 @@ acList.addEventListener('touchend', function (e) {
   const item = e.target.closest('.ac-item');
   if (!item) return;
   e.preventDefault();
-  // 도로명 결과
   var roadI = item.getAttribute('data-road-i');
-  if (roadI !== null) { resolveRoadToTariff(_roadResults[parseInt(roadI, 10)]); return; }
-  // 행정동 결과
+  if (roadI !== null) { _jusoToTariff(_roadResults[parseInt(roadI, 10)]); return; }
   selectItem(parseInt(item.getAttribute('data-i'), 10));
 }, { passive: false });
 acList.addEventListener('mousedown', function (e) {
   const item = e.target.closest('.ac-item');
   if (!item) return;
   e.preventDefault();
-  // 도로명 결과
   var roadI = item.getAttribute('data-road-i');
-  if (roadI !== null) { resolveRoadToTariff(_roadResults[parseInt(roadI, 10)]); return; }
-  // 행정동 결과
+  if (roadI !== null) { _jusoToTariff(_roadResults[parseInt(roadI, 10)]); return; }
   selectItem(parseInt(item.getAttribute('data-i'), 10));
 });
 
