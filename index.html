@@ -15,6 +15,7 @@
 <title>안전운임 조회</title>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5D5CQQX1DJ"></script>
+<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=3754d1f9a6eeeb9acf5739e42635dadd&libraries=services"></script>  
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -1530,9 +1531,11 @@ function openDaumPopup() {
   });
 }
 
-// Daum 결과 → flat.js 행정동 매핑 → 운임 표시 + [정밀 우회] 카카오 지도 도로명 정밀 매핑
+// Daum 주소 결과 → flat.js 행정동 요율 매핑 → 드롭박스 없이 도로명 정밀 지도 표출
 function mapDaumToTariff(data) {
-  // 🌟 1. 사용자가 선택한 실제 도로명 주소 그대로 카카오 지도에 정밀 마커 표시
+  // -------------------------------------------------------------
+  // 1. 카카오 Geocoder를 활용해 사용자가 누른 실제 도로명 주소 위치에 정밀 마커 표시
+  // -------------------------------------------------------------
   if (typeof kakao !== 'undefined' && kakao.maps && kakao.maps.services) {
     var geocoder = new kakao.maps.services.Geocoder();
     
@@ -1540,21 +1543,21 @@ function mapDaumToTariff(data) {
       if (status === kakao.maps.services.Status.OK) {
         var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
-        // 기존에 그려져 있던 행정동 폴리곤(면) 제거
+        // 기존 행정동 영역(폴리곤 면)이 지도에 그려져 있다면 초기화
         if (window.currentPolygon) {
           window.currentPolygon.setMap(null);
         }
 
-        // 목적지 정확한 건물 위치에 마커 표시
+        // 목적지 빌딩/건물 단위 정밀 마커 생성 및 기존 마커 교체
         if (window.destMarker) {
           window.destMarker.setMap(null);
         }
         window.destMarker = new kakao.maps.Marker({
-          map: map,
+          map: map, // 최초 생성된 카카오 map 객체 변수
           position: coords
         });
 
-        // 지도 중심 이동 및 상세 확대
+        // 지도의 중심을 마커 위치로 이동하고 주변 건물이 뚜렷하게 보일 정도로 확대(레벨 3)
         map.setCenter(coords);
         map.setLevel(3);
       }
@@ -1562,7 +1565,7 @@ function mapDaumToTariff(data) {
   }
 
   // -------------------------------------------------------------
-  // 2. 안전운임 행정동 매핑 데이터 필터링 엔진
+  // 2. 안전운임 연동을 위한 백엔드 행정동 매핑 엔진 (요율 매칭용)
   // -------------------------------------------------------------
   var sido     = data.sido     || '';
   var sigungu  = data.sigungu  || '';
@@ -1571,7 +1574,6 @@ function mapDaumToTariff(data) {
   var flat     = window.FLAT   || [];
   var results  = [];
 
-  // sido 정규화 (약칭 → 전체명)
   var sidoMap = {
     '서울': '서울특별시', '부산': '부산광역시', '대구': '대구광역시',
     '인천': '인천광역시', '광주': '광주광역시', '대전': '대전광역시',
@@ -1582,54 +1584,36 @@ function mapDaumToTariff(data) {
   };
   var sidoFull = sidoMap[sido] || sido;
 
-  // 전략 1: sido + sigungu + dong (가장 정확)
   if (sidoFull && sigungu && dong) {
     results = flat.filter(function (item) {
-      return item.l.indexOf(sidoFull) >= 0 &&
-             item.l.indexOf(sigungu) >= 0 &&
-             item.l.indexOf(dong) >= 0;
+      return item.l.indexOf(sidoFull) >= 0 && item.l.indexOf(sigungu) >= 0 && item.l.indexOf(dong) >= 0;
     });
   }
-
-  // 전략 2: sido + sigungu + 법정동 기본명 매칭
   if (!results.length && sidoFull && sigungu && dong) {
     var baseDong = dong.replace(/[0-9]/g, '').replace(/[동리]$/, '').trim();
     if (baseDong.length >= 2) {
       results = flat.filter(function (item) {
-        return item.l.indexOf(sidoFull) >= 0 &&
-               item.l.indexOf(sigungu) >= 0 &&
-               item.l.indexOf(baseDong) >= 0;
+        return item.l.indexOf(sidoFull) >= 0 && item.l.indexOf(sigungu) >= 0 && item.l.indexOf(baseDong) >= 0;
       });
     }
   }
-
-  // 전략 3: sido + sigungu + 읍면 (읍면 지역)
   if (!results.length && sidoFull && sigungu && eup) {
     results = flat.filter(function (item) {
-      return item.l.indexOf(sidoFull) >= 0 &&
-             item.l.indexOf(sigungu) >= 0 &&
-             item.l.indexOf(eup) >= 0;
+      return item.l.indexOf(sidoFull) >= 0 && item.l.indexOf(sigungu) >= 0 && item.l.indexOf(eup) >= 0;
     });
   }
-
-  // 전략 4: sido + sigungu 전체
   if (!results.length && sidoFull && sigungu) {
     results = flat.filter(function (item) {
-      return item.l.indexOf(sidoFull) >= 0 &&
-             item.l.indexOf(sigungu) >= 0;
+      return item.l.indexOf(sidoFull) >= 0 && item.l.indexOf(sigungu) >= 0;
     });
   }
-
-  // 전략 5: sigungu + dong
   if (!results.length && sigungu && dong) {
     var guTokens = sigungu.split(' ').filter(Boolean);
     results = flat.filter(function (item) {
-      return guTokens.every(function (t) { return item.l.indexOf(t) >= 0; }) &&
-             item.l.indexOf(dong) >= 0;
+      return guTokens.every(function (t) { return item.l.indexOf(t) >= 0; }) && item.l.indexOf(dong) >= 0;
     });
   }
 
-  // 운임 데이터 있는 것만 필터
   if (tariffLoaded && results.length) {
     var withData = results.filter(function (item) {
       return !!(TARIFF[item.k] || TARIFF[normalizeKeyForOldNotice(item.k)]);
@@ -1638,50 +1622,52 @@ function mapDaumToTariff(data) {
   }
 
   // -------------------------------------------------------------
-  // 3. UI 제어 및 결과 표출 (🔥 우회 로직 강화)
+  // 3. 드롭박스 원천 차단 및 화면 UI 오염 방지 가로채기
   // -------------------------------------------------------------
-  // ❌ 원래 있던 searchMode = 'dong'; 코드를 지웠습니다! 
-  // 도로명 모드('road') 상태를 그대로 유지해야 selectItem() 내부에서 드롭박스를 강제로 재호출하지 않습니다.
-  
-  inp.value = data.roadAddress; 
-
   if (!results.length) {
     inp.value = '';
     showInlineError('해당 주소의 운임 지역을 찾을 수 없습니다. 동 이름으로 직접 검색해 보세요.');
     return;
   }
 
-  // 데이터 강제 세팅 및 화면 갱신
+  // 대기 데이터 목록에 매칭된 행정동 결과 배열 주입
   acResults = results;
-  document.getElementById('sv1').innerText = data.roadAddress; 
   
-  // 첫 번째 매칭 구역(0번 인덱스) 강제 선택
+  // 상단 화면 라벨과 주소 검색창 텍스트를 행정동 이름으로 오염시키지 않고 '도로명 주소'로 강제 박제
+  document.getElementById('sv1').innerText = data.roadAddress; 
+  inp.value = data.roadAddress; 
+
+  // 역삼1동, 역삼2동처럼 복수 결과가 있더라도 드롭다운 팝업창을 완전히 숨깁니다.
+  if (typeof hideAC === 'function') hideAC();
+  else if (typeof acWrap !== 'undefined' && acWrap) acWrap.style.display = 'none';
+
+  // 가장 첫 번째로 매칭되는 행정동 매핑 데이터를 기준으로 안전운임 연동 카드를 강제 실행
   selectItem(0); 
 
-  // 🌟 selectItem(0)이 실행되면서 드롭다운을 다시 열어버리는 부작용을 원천 차단하기 위해 
-  // 모든 연산이 완벽히 끝난 최종 시점에 드롭박스를 한 번 더 확실하게 닫아줍니다.
+  // 🌟 [핵심 타이밍 차단] selectItem(0) 내부 로직이 돌아가면서 화면 입력창 주소와 
+  // 드롭박스 UI를 다시 행정동 상태로 복원해버리는 부작용을 마이크로초 단위 꼼수로 다시 가로챕니다.
   setTimeout(function() {
-    if (typeof hideAC === 'function') {
-      hideAC();
-    } else if (typeof acWrap !== 'undefined' && acWrap) {
-      acWrap.style.display = 'none';
-    }
-  }, 50);
+    inp.value = data.roadAddress;
+    document.getElementById('sv1').innerText = data.roadAddress;
+    if (typeof hideAC === 'function') hideAC();
+  }, 10);
+  
+  setTimeout(function() {
+    inp.value = data.roadAddress;
+    if (typeof hideAC === 'function') hideAC();
+  }, 80);
 }
 
 // -------------------------------------------------------------
-// 4. 검색 모드 전환 제어 함수
+// 4. 검색 모드 전환 및 Daum Postcode 연동 함수
 // -------------------------------------------------------------
 function setSearchMode(mode) {
   searchMode = mode;
   document.getElementById('smt-dong').classList.toggle('active', mode === 'dong');
   document.getElementById('smt-road').classList.toggle('active', mode === 'road');
   
-  if (typeof hideAC === 'function') {
-    hideAC();
-  } else if (typeof acWrap !== 'undefined' && acWrap) {
-    acWrap.style.display = 'none';
-  }
+  if (typeof hideAC === 'function') hideAC();
+  else if (typeof acWrap !== 'undefined' && acWrap) acWrap.style.display = 'none';
   _daumEmbedOpen = false;
 
   if (mode === 'dong') {
@@ -1690,16 +1676,16 @@ function setSearchMode(mode) {
     inp.value = (typeof state !== 'undefined' && state && state.label) ? state.label : '';
     if (!('ontouchstart' in window)) inp.focus();
   } else {
-    // 도로명 주소 모드일 때
+    // 도로명 검색 모드 활성화 시
     inp.readOnly = true;
     inp.placeholder = '클릭하여 도로명 주소 검색';
     inp.value = '';
     
-    // 도로명 모드 전환 시 바로 Daum 팝업 열기
+    // 주소 검색 팝업창 레이어 호출
     loadDaumPostcode(function () {
       new daum.Postcode({
         oncomplete: function (data) {
-          mapDaumToTariff(data);
+          mapDaumToTariff(data); // 수정된 연동 엔진 실행
         },
         width: '100%',
         height: '100%'
@@ -1708,6 +1694,7 @@ function setSearchMode(mode) {
   }
 }
 
+// 상단 모드 변경 탭 이벤트 바인딩
 document.getElementById('smt-dong').addEventListener('click', function () { setSearchMode('dong'); });
 document.getElementById('smt-road').addEventListener('click', function () { setSearchMode('road'); });
 
